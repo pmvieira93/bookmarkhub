@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookmarks Manager</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 90vw;
+            margin: 0 auto;
+            background: #161b22;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid #21262d;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #238636 0%, #196c2e 100%);
+            color: white;
+            padding: 24px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.7em;
+        }
+
+        .controls {
+            padding: 24px 30px;
+            background: #21262d;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #0d1117;
+            color: #c9d1d9;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #238636;
+            box-shadow: 0 0 0 2px rgba(35, 134, 54, 0.3);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7d8590;
+            font-size: 14px;
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #7d8590;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 3px;
+            line-height: 1;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+        .search-clear-btn:hover {
+            background: #21262d;
+            color: #f85149;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #238636;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2ea043;
+        }
+
+        .btn-secondary {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+        }
+
+        .btn-secondary:hover {
+            background: #30363d;
+        }
+
+        .filters-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7d8590;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-filter, .tag-filter {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag-filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .environment-tags-column {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .logic-controls-column {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .environment-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .logic-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .logic-controls.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .user-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .category-btn, .tag-btn {
+            padding: 6px 12px;
+            border: 1px solid #30363d;
+            background: #21262d;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 12px;
+            color: #c9d1d9;
+            font-family: inherit;
+            position: relative;
+        }
+
+        .category-btn.active, .tag-btn.active {
+            background: #238636;
+            color: white;
+            border-color: #238636;
+        }
+
+        .category-btn:hover, .tag-btn:hover {
+            border-color: #238636;
+            background: #30363d;
+        }
+
+        .category-btn.active:hover, .tag-btn.active:hover {
+            background: #2ea043;
+        }
+
+        .tag-btn {
+            background: #21262d;
+        }
+
+        .tag-btn.active {
+            background: #0969da;
+            border-color: #0969da;
+        }
+
+        .tag-btn.active:hover {
+            background: #1f6feb;
+        }
+
+        .tag-btn.and-active {
+            background: #238636;
+            border-color: #238636;
+        }
+
+        .tag-btn.and-active:hover {
+            background: #2ea043;
+        }
+
+        .logic-toggle {
+            display: flex;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .logic-btn {
+            padding: 4px 10px;
+            background: transparent;
+            border: none;
+            color: #c9d1d9;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .logic-btn.active {
+            background: #0969da;
+            color: white;
+        }
+
+        .logic-btn:hover:not(.active) {
+            background: #30363d;
+        }
+
+        .clear-filters {
+            padding: 4px 8px;
+            background: #da3633;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+        }
+
+        .clear-filters:hover {
+            opacity: 1;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            color: #7d8590;
+            font-size: 10px;
+            margin-left: 8px;
+        }
+
+        .filter-indicator {
+            background: #30363d;
+            color: #c9d1d9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .filter-count {
+            font-size: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+
+        .bookmarks-grid {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            min-height: 400px;
+        }
+
+        .bookmarks-organized {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        .bookmark-card {
+            background: #21262d;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #30363d;
+            transition: all 0.2s ease;
+            position: relative;
+            max-width: 320px;
+            max-height: 120px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .bookmark-card:hover {
+            border-color: #238636;
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.15);
+        }
+
+        .bookmark-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex: 1;
+        }
+
+        .bookmark-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: #30363d;
+            color: #c9d1d9;
+            flex-shrink: 0;
+        }
+
+        .bookmark-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .bookmark-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #58a6ff;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        .bookmark-title:hover {
+            color: #79c0ff;
+        }
+
+        .bookmark-url {
+            font-size: 12px;
+            color: #7d8590;
+            word-wrap: break-word;
+            line-height: 1.2;
+        }
+
+        .bookmark-category {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #da3633;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .bookmark-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            background: #0969da;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .tag.prod { background: #da3633; }
+        .tag.dev { background: #238636; }
+        .tag.int { background: #fb8500; }
+        .tag.test { background: #8b5cf6; }
+        .tag.staging { background: #0891b2; }
+
+        .bookmark-menu {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+        }
+
+        .menu-dots {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background: #30363d;
+            border: 1px solid #21262d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            color: #7d8590;
+        }
+
+        .menu-dots:hover {
+            background: #238636;
+            color: white;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            bottom: 100%;
+            right: 0;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 100;
+            min-width: 120px;
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #c9d1d9;
+            border-bottom: 1px solid #21262d;
+            transition: background 0.2s ease;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background: #21262d;
+        }
+
+        .menu-item.delete:hover {
+            background: #da3633;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #21262d;
+            padding: 24px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #30363d;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: #c9d1d9;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #c9d1d9;
+            font-size: 13px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #238636;
+            box-shadow: 0 0 0 2px rgba(35, 134, 54, 0.3);
+        }
+
+        .form-group small {
+            color: #7d8590;
+            font-size: 11px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .tags-input-container {
+            position: relative;
+        }
+
+        .tags-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+
+        .tag-suggestion {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #21262d;
+            font-size: 12px;
+            color: #c9d1d9;
+        }
+
+        .tag-suggestion:hover {
+            background: #21262d;
+        }
+
+        .tag-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .current-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .current-tag {
+            background: #0969da;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.7;
+            font-size: 12px;
+        }
+
+        .remove-tag:hover {
+            opacity: 1;
+        }
+
+        .icon-picker-container {
+            position: relative;
+        }
+
+        .icon-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-preview {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #21262d;
+            color: #c9d1d9;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-preview:hover {
+            border-color: #238636;
+            background: #30363d;
+        }
+
+        .icon-picker {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            height: 250px;
+            z-index: 20;
+            display: none;
+            padding: 8px;
+            width: 400px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .icon-picker.show {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .icon-picker-header {
+            flex-shrink: 0;
+            margin-bottom: 8px;
+        }
+
+        .icon-picker-content {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .icon-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+        }
+
+        .icon-tab {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: #c9d1d9;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s ease;
+        }
+
+        .icon-tab.active {
+            background: #238636;
+            border-color: #238636;
+            color: white;
+        }
+
+        .icon-tab:hover:not(.active) {
+            background: #30363d;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+        }
+
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+        }
+
+        .icon-option {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            color: #c9d1d9;
+        }
+
+        .icon-option:hover {
+            background: #21262d;
+            color: #58a6ff;
+        }
+
+        .icon-search {
+            width: 100%;
+            padding: 6px 8px;
+            margin-bottom: 0;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            background: #0d1117;
+            color: #c9d1d9;
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .icon-search:focus {
+            outline: none;
+            border-color: #238636;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* Checkbox styling */
+        #organizeByCategoryCheckbox {
+            width: 16px;
+            height: 16px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #c9d1d9;
+            gap: 8px;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        /* Category sections */
+        .category-section {
+            margin-bottom: 24px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0;
+        }
+
+        .category-header:hover {
+            background: #21262d;
+            border-color: #238636;
+        }
+
+        .category-header.collapsed {
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .category-toggle {
+            font-size: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .category-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .category-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #c9d1d9;
+            flex: 1;
+        }
+
+        .category-count {
+            font-size: 12px;
+            color: #7d8590;
+            background: #21262d;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .category-content {
+            border: 1px solid #30363d;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 16px;
+            background: #0d1117;
+        }
+
+        .category-content.collapsed {
+            display: none;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .no-bookmarks {
+            text-align: center;
+            padding: 60px 30px;
+            color: #7d8590;
+            grid-column: 1 / -1;
+        }
+
+        .no-bookmarks h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #c9d1d9;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .error-message {
+            background: #da3633;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .warning-message {
+            background: #fb8500;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .file-input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-btn {
+            background: #30363d;
+            color: #c9d1d9;
+            border: 1px solid #21262d;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .file-btn:hover {
+            background: #238636;
+            color: white;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #da3633;
+            color: white;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            font-size: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #161b22;
+            animation: pulse 2s infinite;
+        }
+
+        .export-btn-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95vw;
+            }
+            
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .bookmarks-grid {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Bookmarks Manager</h1>
+            <p>Better organization for your daily work</p>
+        </div>
+
+        <div class="controls">
+            <div class="controls-row">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search bookmarks, tags, categories...">
+                    <span class="search-icon" id="searchIcon">🔍</span>
+                    <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()" style="display: none;">✕</button>
+                </div>
+                <button class="btn btn-primary" onclick="openModal()">➕ Add</button>
+                <div class="export-btn-container">
+                    <button class="btn btn-secondary" onclick="exportToYAML()">💾 Export</button>
+                    <span class="notification-badge" id="exportNotification" style="display: none;">0</span>
+                </div>
+                <button class="btn btn-secondary" onclick="importFromYAML()">📂 Import</button>
+                <button class="btn btn-secondary" onclick="openSettingsModal()">⚙️ Settings</button>
+            </div>
+            <div class="filters-section">
+                <div class="filter-group">
+                    <div class="filter-label">Categories</div>
+                    <div class="category-filter" id="categoryFilter">
+                        <button class="category-btn active" onclick="filterCategory('All')">All</button>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-label">Tags</div>
+                    <div class="tag-filter-row" id="tagFilterRow">
+                        <div class="environment-tags-column">
+                            <div class="environment-tags" id="environmentTags"></div>
+                        </div>
+                        <div class="logic-controls-column">
+                            <div class="logic-controls disabled" id="logicControls">
+                                <span>Logic:</span>
+                                <div class="logic-toggle">
+                                    <button class="logic-btn active" onclick="setTagLogic('OR')">OR</button>
+                                    <button class="logic-btn" onclick="setTagLogic('AND')">AND</button>
+                                </div>
+                                <button class="clear-filters" onclick="clearAllFilters()">Clear</button>
+                            </div>
+                            <div class="active-filters" id="activeFilters"></div>
+                        </div>
+                    </div>
+                    <div class="user-tags" id="userTags"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bookmarks-grid" id="bookmarksGrid">
+            <div class="no-bookmarks">
+                <h3>No bookmarks yet</h3>
+                <p>Click "Add" to create your first bookmark</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookmark Modal -->
+    <div id="bookmarkModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Add New Bookmark</h3>
+            <form id="bookmarkForm">
+                <div class="form-group">
+                    <label for="bookmarkTitle">Title</label>
+                    <input type="text" id="bookmarkTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookmarkUrl">URL</label>
+                    <input type="url" id="bookmarkUrl" required>
+                </div>
+                <div class="form-group">
+                    <label for="bookmarkIcon">Icon</label>
+                    <div class="icon-picker-container">
+                        <div class="icon-input-wrapper">
+                            <div class="icon-preview" id="iconPreview" onclick="toggleIconPicker(event)">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <input type="text" id="bookmarkIcon" placeholder="Click preview to choose icon" readonly>
+                        </div>
+                        <div class="icon-picker" id="iconPicker">
+                            <div class="icon-picker-header">
+                                <div class="icon-tabs">
+                                    <button type="button" class="icon-tab active" onclick="switchIconTab('fontawesome', event)">Font Awesome</button>
+                                    <button type="button" class="icon-tab" onclick="switchIconTab('lucide', event)">Lucide</button>
+                                    <button type="button" class="icon-tab" onclick="switchIconTab('feather', event)">Feather</button>
+                                    <button type="button" class="icon-tab" onclick="switchIconTab('emoji', event)">Emoji</button>
+                                </div>
+                                <input type="text" class="icon-search" id="iconSearch" placeholder="Search icons..." onkeyup="filterIcons()">
+                            </div>
+                            <div class="icon-picker-content">
+                                <div class="icon-grid" id="iconGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <small>Choose from Font Awesome icons or enter custom emoji</small>
+                </div>
+                <div class="form-group">
+                    <label for="bookmarkCategory">Category</label>
+                    <select id="bookmarkCategory"></select>
+                </div>
+                <div class="form-group">
+                    <label for="bookmarkTags">Tags</label>
+                    <div class="tags-input-container">
+                        <input type="text" id="bookmarkTags" placeholder="prod, api, frontend...">
+                        <div class="tags-suggestions" id="tagsSuggestions"></div>
+                    </div>
+                    <div class="current-tags" id="currentTags"></div>
+                    <small>Separate tags with commas or spaces</small>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <h3>Settings</h3>
+            
+            <div id="settingsMessage"></div>
+            
+            <div class="form-group">
+                <label for="categoriesList">Categories (comma separated)</label>
+                <textarea id="categoriesList" rows="3" placeholder="General, Support, Development, Personal, Apps, Documentation, Intranet, Tools"></textarea>
+                <small>Define your custom categories. Default will be used if empty.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="environmentTagsList">Environment Tags (comma separated)</label>
+                <textarea id="environmentTagsList" rows="2" placeholder="prod, dev, test, staging"></textarea>
+                <small>Define environment tags that will appear prominently after "All Tags". Leave empty to disable.</small>
+            </div>
+            
+            <div class="form-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="organizeByCategoryCheckbox">
+                    Organize bookmarks by category sections
+                </label>
+                <small>When enabled, bookmarks will be grouped into collapsible category sections</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default settings
+        const defaultSettings = {
+            categories: "General,Support,Development,Personal,Apps,Documentation,Intranet,Tools",
+            environmentTags: "",
+            organizeByCategory: false
+        };
+
+        let bookmarks = [];
+        let currentFilter = 'All';
+        let currentTagFilters = []; // Changed to array for multiple tags
+        let tagLogic = 'OR'; // 'OR' or 'AND'
+        let editingIndex = -1;
+        let currentBookmarkTags = [];
+        let settings = {...defaultSettings};
+        let pendingChangesCount = 0; // Track all changes (add/edit/delete) since last export
+        let lastExportTime = null; // Track when the last export was made
+        
+        // Popular Font Awesome icons for bookmarks
+        const popularIcons = {
+            fontawesome: [
+                'fas fa-globe', 'fas fa-home', 'fas fa-star', 'fas fa-bookmark', 'fas fa-heart',
+                'fas fa-code', 'fas fa-database', 'fas fa-server', 'fas fa-laptop', 'fas fa-mobile',
+                'fas fa-shopping-cart', 'fas fa-envelope', 'fas fa-user', 'fas fa-users', 'fas fa-cog',
+                'fas fa-chart-bar', 'fas fa-file', 'fas fa-folder', 'fas fa-image', 'fas fa-video',
+                'fas fa-music', 'fas fa-gamepad', 'fas fa-book', 'fas fa-graduation-cap', 'fas fa-briefcase',
+                'fas fa-calculator', 'fas fa-calendar', 'fas fa-clock', 'fas fa-map', 'fas fa-camera',
+                'fas fa-cloud', 'fas fa-shield-alt', 'fas fa-lock', 'fas fa-key', 'fas fa-tools',
+                'fas fa-wrench', 'fas fa-bug', 'fas fa-rocket', 'fas fa-fire', 'fas fa-bolt',
+                'fab fa-github', 'fab fa-google', 'fab fa-amazon', 'fab fa-apple', 'fab fa-microsoft',
+                'fab fa-facebook', 'fab fa-twitter', 'fab fa-instagram', 'fab fa-youtube', 'fab fa-linkedin'
+            ],
+            lucide: [
+                'activity', 'alert-circle', 'archive', 'arrow-right', 'at-sign',
+                'bookmark', 'briefcase', 'calendar', 'camera', 'chart-bar',
+                'check-circle', 'clock', 'cloud', 'code', 'coffee',
+                'database', 'download', 'edit', 'eye', 'file',
+                'folder', 'globe', 'heart', 'home', 'image',
+                'key', 'laptop', 'link', 'lock', 'mail',
+                'map', 'monitor', 'music', 'phone', 'play',
+                'search', 'server', 'settings', 'shield', 'smartphone',
+                'star', 'tag', 'terminal', 'tool', 'user',
+                'video', 'wifi', 'zap'
+            ],
+            feather: [
+                'activity', 'airplay', 'alert-circle', 'archive', 'at-sign',
+                'award', 'bar-chart', 'bookmark', 'briefcase', 'calendar',
+                'camera', 'check-circle', 'clock', 'cloud', 'code',
+                'coffee', 'cpu', 'database', 'download', 'edit',
+                'eye', 'file', 'folder', 'globe', 'heart',
+                'home', 'image', 'key', 'laptop', 'link',
+                'lock', 'mail', 'map', 'monitor', 'music',
+                'phone', 'play', 'search', 'server', 'settings',
+                'shield', 'smartphone', 'star', 'tag', 'terminal',
+                'tool', 'user', 'video', 'wifi', 'zap'
+            ],
+            emoji: [
+                '🌐', '🏠', '⭐', '📖', '❤️', '💻', '🗄️', '🖥️', '📱', '🛒',
+                '📧', '👤', '👥', '⚙️', '📊', '📄', '📁', '🖼️', '🎥', '🎵',
+                '🎮', '📚', '🎓', '💼', '🧮', '📅', '⏰', '🗺️', '📷', '☁️',
+                '🛡️', '🔒', '🔑', '🔧', '🪛', '🐛', '🚀', '🔥', '⚡', '📈',
+                '💰', '🛍️', '🍕', '☕', '🎯', '🎨', '🔬', '🧪', '🏆', '🎉',
+                '🌟', '💎', '🎪', '🎭', '🎨', '🎻', '🎸', '🥁', '🎤', '🎧'
+            ]
+        };
+
+        let currentIconTab = 'fontawesome';
+        
+        // Common tags for suggestions
+        const commonTags = ['prod', 'dev', 'int', 'test', 'staging', 'api', 'frontend', 'backend', 'database', 'admin', 'monitoring', 'docs', 'ci/cd', 'mobile', 'web'];
+
+        // Initialize the app
+        function init() {
+            loadSettings();
+            loadBookmarks();
+            loadExportTracking(); // Load export tracking data
+            renderBookmarks();
+            updateCategoryFilter();
+            updateTagFilter();
+            populateCategorySelect();
+            updateExportNotification(); // Update notification on load
+            
+            // Initialize icon picker
+            initializeIconPicker();
+            
+            // Add search functionality
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+            
+            // Add tags input functionality
+            const tagsInput = document.getElementById('bookmarkTags');
+            tagsInput.addEventListener('input', handleTagsInput);
+            tagsInput.addEventListener('keydown', handleTagsKeydown);
+            tagsInput.addEventListener('focus', showTagSuggestions);
+            
+            // Hide suggestions and menus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.tags-input-container')) {
+                    document.getElementById('tagsSuggestions').style.display = 'none';
+                }
+                if (!e.target.closest('.bookmark-menu')) {
+                    document.querySelectorAll('.menu-dropdown').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
+                if (!e.target.closest('.icon-picker-container')) {
+                    document.getElementById('iconPicker').classList.remove('show');
+                }
+            });
+            
+            // Add specific event listener for icon picker to prevent modal closure
+            document.addEventListener('click', function(e) {
+                // If click is inside icon picker, prevent any form submission or modal closure
+                if (e.target.closest('.icon-picker')) {
+                    e.stopPropagation();
+                    // Don't prevent default for actual icon selections, only for navigation
+                    if (e.target.closest('.icon-tab') || e.target.closest('.icon-search')) {
+                        e.preventDefault();
+                    }
+                }
+            });
+            
+            // Add beforeunload listener to prompt export if there are unsaved changes
+            window.addEventListener('beforeunload', function(e) {
+                if (pendingChangesCount > 0) {
+                    const message = `You have ${pendingChangesCount} unsaved change${pendingChangesCount === 1 ? '' : 's'} that haven't been exported yet. Are you sure you want to leave?`;
+                    e.preventDefault();
+                    e.returnValue = message; // For Chrome
+                    return message; // For other browsers
+                }
+            });
+        }
+
+        // Settings management
+        function loadSettings() {
+            try {
+                const stored = localStorage.getItem('bookmarks_settings');
+                if (stored) {
+                    const parsedSettings = JSON.parse(stored);
+                    settings = {...defaultSettings, ...parsedSettings};
+                } else {
+                    settings = {...defaultSettings};
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                settings = {...defaultSettings};
+            }
+        }
+
+        function saveSettingsToStorage() {
+            try {
+                localStorage.setItem('bookmarks_settings', JSON.stringify(settings));
+                return true;
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                return false;
+            }
+        }
+
+        // Bookmarks management
+        function loadBookmarks() {
+            try {
+                const stored = localStorage.getItem('bookmarks');
+                bookmarks = stored ? JSON.parse(stored) : [];
+            } catch (error) {
+                console.error('Error loading bookmarks:', error);
+                bookmarks = [];
+            }
+        }
+
+        function saveBookmarks() {
+            try {
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                return true;
+            } catch (error) {
+                console.error('Error saving bookmarks:', error);
+                return false;
+            }
+        }
+
+        // Export tracking functions
+        function loadExportTracking() {
+            try {
+                const stored = localStorage.getItem('export_tracking');
+                if (stored) {
+                    const data = JSON.parse(stored);
+                    pendingChangesCount = data.pendingChangesCount || 0;
+                    lastExportTime = data.lastExportTime || null;
+                } else {
+                    pendingChangesCount = 0;
+                    lastExportTime = null;
+                }
+            } catch (error) {
+                console.error('Error loading export tracking:', error);
+                pendingChangesCount = 0;
+                lastExportTime = null;
+            }
+        }
+
+        function saveExportTracking() {
+            try {
+                const data = {
+                    pendingChangesCount: pendingChangesCount,
+                    lastExportTime: lastExportTime
+                };
+                localStorage.setItem('export_tracking', JSON.stringify(data));
+                return true;
+            } catch (error) {
+                console.error('Error saving export tracking:', error);
+                return false;
+            }
+        }
+
+        function updateExportNotification() {
+            const badge = document.getElementById('exportNotification');
+            if (pendingChangesCount > 0) {
+                badge.textContent = pendingChangesCount;
+                badge.style.display = 'flex';
+                badge.title = `${pendingChangesCount} change${pendingChangesCount === 1 ? '' : 's'} since last export (additions, edits, deletions)`;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function incrementChangesCount(changeType = 'change') {
+            pendingChangesCount++;
+            saveExportTracking();
+            updateExportNotification();
+            console.log(`Tracked ${changeType}: ${pendingChangesCount} pending changes`);
+        }
+
+        function resetChangesCount() {
+            pendingChangesCount = 0;
+            lastExportTime = new Date().toISOString();
+            saveExportTracking();
+            updateExportNotification();
+        }
+
+        // Icon picker functions
+        function initializeIconPicker() {
+            // Initialize Lucide and Feather icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            loadIconTab('fontawesome');
+        }
+
+        function switchIconTab(tab, event) {
+            // Prevent event bubbling that could close the modal
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            currentIconTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.icon-tab').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(tab)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            loadIconTab(tab);
+            document.getElementById('iconSearch').value = '';
+        }
+
+        function loadIconTab(tab) {
+            const iconGrid = document.getElementById('iconGrid');
+            const icons = popularIcons[tab] || [];
+            
+            if (tab === 'emoji') {
+                iconGrid.className = 'emoji-grid';
+                iconGrid.innerHTML = icons.map(icon => 
+                    `<div class="icon-option" onclick="selectIcon('${icon}', 'emoji', event)" title="${icon}">
+                        ${icon}
+                    </div>`
+                ).join('');
+            } else {
+                iconGrid.className = 'icon-grid';
+                iconGrid.innerHTML = icons.map(icon => {
+                    let iconHtml = '';
+                    if (tab === 'fontawesome') {
+                        iconHtml = `<i class="${icon}"></i>`;
+                    } else if (tab === 'lucide') {
+                        iconHtml = `<i data-lucide="${icon}"></i>`;
+                    } else if (tab === 'feather') {
+                        iconHtml = `<i data-feather="${icon}"></i>`;
+                    }
+                    
+                    return `<div class="icon-option" onclick="selectIcon('${icon}', '${tab}', event)" title="${icon}">
+                        ${iconHtml}
+                    </div>`;
+                }).join('');
+                
+                // Re-initialize icon libraries for new elements
+                if (tab === 'lucide' && typeof lucide !== 'undefined') {
+                    setTimeout(() => lucide.createIcons(), 10);
+                }
+                if (tab === 'feather' && typeof feather !== 'undefined') {
+                    setTimeout(() => feather.replace(), 10);
+                }
+            }
+        }
+
+        function toggleIconPicker(event) {
+            // Prevent event bubbling that could close the modal
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            const picker = document.getElementById('iconPicker');
+            picker.classList.toggle('show');
+        }
+
+        function selectIcon(iconClass, type = 'fontawesome', event) {
+            // Prevent event bubbling that could close the modal
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            
+            const preview = document.getElementById('iconPreview');
+            const input = document.getElementById('bookmarkIcon');
+            
+            let iconData = '';
+            if (type === 'emoji') {
+                preview.innerHTML = iconClass;
+                iconData = iconClass;
+            } else if (type === 'fontawesome') {
+                preview.innerHTML = `<i class="${iconClass}"></i>`;
+                iconData = iconClass;
+            } else if (type === 'lucide') {
+                preview.innerHTML = `<i data-lucide="${iconClass}"></i>`;
+                iconData = `lucide:${iconClass}`;
+                setTimeout(() => lucide.createIcons(), 10);
+            } else if (type === 'feather') {
+                preview.innerHTML = `<i data-feather="${iconClass}"></i>`;
+                iconData = `feather:${iconClass}`;
+                setTimeout(() => feather.replace(), 10);
+            }
+            
+            input.value = iconData;
+            document.getElementById('iconPicker').classList.remove('show');
+        }
+
+        function filterIcons() {
+            const search = document.getElementById('iconSearch').value.toLowerCase();
+            const icons = popularIcons[currentIconTab] || [];
+            const filteredIcons = icons.filter(icon => 
+                icon.toLowerCase().includes(search) || 
+                (typeof icon === 'string' && icon.split('-').some(part => part.includes(search)))
+            );
+            
+            const iconGrid = document.getElementById('iconGrid');
+            
+            if (currentIconTab === 'emoji') {
+                iconGrid.innerHTML = filteredIcons.map(icon => 
+                    `<div class="icon-option" onclick="selectIcon('${icon}', 'emoji', event)" title="${icon}">
+                        ${icon}
+                    </div>`
+                ).join('');
+            } else {
+                iconGrid.innerHTML = filteredIcons.map(icon => {
+                    let iconHtml = '';
+                    if (currentIconTab === 'fontawesome') {
+                        iconHtml = `<i class="${icon}"></i>`;
+                    } else if (currentIconTab === 'lucide') {
+                        iconHtml = `<i data-lucide="${icon}"></i>`;
+                    } else if (currentIconTab === 'feather') {
+                        iconHtml = `<i data-feather="${icon}"></i>`;
+                    }
+                    
+                    return `<div class="icon-option" onclick="selectIcon('${icon}', '${currentIconTab}', event)" title="${icon}">
+                        ${iconHtml}
+                    </div>`;
+                }).join('');
+                
+                // Re-initialize icon libraries
+                if (currentIconTab === 'lucide' && typeof lucide !== 'undefined') {
+                    setTimeout(() => lucide.createIcons(), 10);
+                }
+                if (currentIconTab === 'feather' && typeof feather !== 'undefined') {
+                    setTimeout(() => feather.replace(), 10);
+                }
+            }
+        }
+
+        function getIconHTML(icon) {
+            if (!icon) return '🌐';
+            
+            // Handle different icon types
+            if (icon.includes('lucide:')) {
+                const iconName = icon.replace('lucide:', '');
+                return `<i data-lucide="${iconName}"></i>`;
+            } else if (icon.includes('feather:')) {
+                const iconName = icon.replace('feather:', '');
+                return `<i data-feather="${iconName}"></i>`;
+            } else if (icon.includes('fa')) {
+                return `<i class="${icon}"></i>`;
+            }
+            
+            // Emoji or text
+            return icon;
+        }
+
+        // Get categories array
+        function getCategories() {
+            return settings.categories.split(',').map(cat => cat.trim()).filter(cat => cat);
+        }
+
+        // Get environment tags array
+        function getEnvironmentTags() {
+            if (!settings.environmentTags) return [];
+            return settings.environmentTags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        }
+
+        // Populate category select
+        function populateCategorySelect() {
+            const select = document.getElementById('bookmarkCategory');
+            const categories = getCategories();
+            select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        }
+
+        // Display message in settings modal
+        function showSettingsMessage(message, type = 'info') {
+            const messageDiv = document.getElementById('settingsMessage');
+            const className = type === 'error' ? 'error-message' : (type === 'warning' ? 'warning-message' : '');
+            messageDiv.innerHTML = `<div class="${className}">${message}</div>`;
+            
+            // Clear message after 5 seconds
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Render bookmarks
+        function renderBookmarks() {
+            const grid = document.getElementById('bookmarksGrid');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filteredBookmarks = [...bookmarks];
+            
+            // Apply category filter
+            if (currentFilter !== 'All') {
+                filteredBookmarks = filteredBookmarks.filter(b => b.category === currentFilter);
+            }
+            
+            // Apply tag filters with AND/OR logic
+            if (currentTagFilters.length > 0) {
+                filteredBookmarks = filteredBookmarks.filter(bookmark => {
+                    if (!bookmark.tags || bookmark.tags.length === 0) return false;
+                    
+                    const bookmarkTags = bookmark.tags.map(tag => tag.toLowerCase());
+                    const selectedTags = currentTagFilters.map(tag => tag.toLowerCase());
+                    
+                    if (tagLogic === 'AND') {
+                        // ALL selected tags must be present
+                        return selectedTags.every(tag => bookmarkTags.includes(tag));
+                    } else {
+                        // ANY selected tag must be present
+                        return selectedTags.some(tag => bookmarkTags.includes(tag));
+                    }
+                });
+            }
+            
+            // Apply search filter (enhanced to include better matching)
+            if (searchTerm) {
+                filteredBookmarks = filteredBookmarks.filter(b => {
+                    const titleMatch = b.title.toLowerCase().includes(searchTerm);
+                    const urlMatch = b.url.toLowerCase().includes(searchTerm);
+                    const categoryMatch = b.category.toLowerCase().includes(searchTerm);
+                    const tagMatch = b.tags && b.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                    const hostMatch = new URL(b.url).hostname.toLowerCase().includes(searchTerm);
+                    
+                    return titleMatch || urlMatch || categoryMatch || tagMatch || hostMatch;
+                });
+            }
+            
+            updateActiveFiltersDisplay();
+            
+            if (filteredBookmarks.length === 0) {
+                const hasFilters = currentFilter !== 'All' || currentTagFilters.length > 0 || searchTerm;
+                grid.innerHTML = `
+                    <div class="no-bookmarks">
+                        <h3>${hasFilters ? 'No bookmarks match your filters' : 'No bookmarks yet'}</h3>
+                        <p>${hasFilters ? 'Try adjusting your search terms or filters' : 'Click "Add" to create your first bookmark'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Check if organize by category is enabled
+            if (settings.organizeByCategory) {
+                renderBookmarksByCategory(filteredBookmarks);
+            } else {
+                renderBookmarksGrid(filteredBookmarks);
+            }
+            
+            // Re-initialize icon libraries for rendered bookmarks
+            setTimeout(() => {
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                if (typeof feather !== 'undefined') feather.replace();
+            }, 10);
+        }
+
+        // Render bookmarks in regular grid format
+        function renderBookmarksGrid(filteredBookmarks) {
+            const grid = document.getElementById('bookmarksGrid');
+            grid.className = 'bookmarks-grid'; // Ensure proper class
+            
+            grid.innerHTML = filteredBookmarks.map(bookmark => createBookmarkHTML(bookmark)).join('');
+        }
+
+        // Render bookmarks organized by category sections
+        function renderBookmarksByCategory(filteredBookmarks) {
+            const grid = document.getElementById('bookmarksGrid');
+            grid.className = 'bookmarks-organized'; // Different class for organized view
+            
+            // Group bookmarks by category
+            const bookmarksByCategory = {};
+            filteredBookmarks.forEach(bookmark => {
+                if (!bookmarksByCategory[bookmark.category]) {
+                    bookmarksByCategory[bookmark.category] = [];
+                }
+                bookmarksByCategory[bookmark.category].push(bookmark);
+            });
+
+            // Get categories in order (settings categories first, then others)
+            const settingsCategories = getCategories();
+            const foundCategories = Object.keys(bookmarksByCategory);
+            const sortedCategories = [
+                ...settingsCategories.filter(cat => foundCategories.includes(cat)),
+                ...foundCategories.filter(cat => !settingsCategories.includes(cat))
+            ];
+
+            grid.innerHTML = sortedCategories.map(category => {
+                const categoryBookmarks = bookmarksByCategory[category];
+                const categoryId = `category-${category.replace(/\s+/g, '-').toLowerCase()}`;
+                
+                return `
+                    <div class="category-section" data-category="${category}">
+                        <div class="category-header" onclick="toggleCategorySection('${categoryId}')">
+                            <span class="category-toggle" id="${categoryId}-toggle">▼</span>
+                            <span class="category-title">${category}</span>
+                            <span class="category-count">${categoryBookmarks.length}</span>
+                        </div>
+                        <div class="category-content" id="${categoryId}-content">
+                            <div class="category-grid">
+                                ${categoryBookmarks.map(bookmark => createBookmarkHTML(bookmark)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Create HTML for a single bookmark
+        function createBookmarkHTML(bookmark) {
+            return `
+                <div class="bookmark-card">
+                    ${!settings.organizeByCategory ? `<div class="bookmark-category">${bookmark.category}</div>` : ''}
+                    <div class="bookmark-header">
+                        <div class="bookmark-icon">${getIconHTML(bookmark.icon || 'fas fa-globe')}</div>
+                        <div class="bookmark-content">
+                            <a href="${bookmark.url}" target="_blank" class="bookmark-title">${bookmark.title}</a>
+                            <div class="bookmark-url">
+                                ${
+                                    (() => {
+                                        const host = new URL(bookmark.url).hostname;
+                                        return host.length > 26 ? host.slice(0, 26) + '..' : host;
+                                    })()
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    ${bookmark.tags && bookmark.tags.length > 0 ? `
+                        <div class="bookmark-tags">
+                            ${bookmark.tags.map(tag => `<span class="tag ${tag.toLowerCase()}" onclick="addTagFilter('${tag}')" style="cursor: pointer;" title="Add '${tag}' to filters">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="bookmark-menu">
+                        <div class="menu-dots" onclick="toggleMenu(${getOriginalIndex(bookmark)})">⋯</div>
+                        <div class="menu-dropdown" id="menu-${getOriginalIndex(bookmark)}">
+                            <div class="menu-item" onclick="editBookmark(${getOriginalIndex(bookmark)})">✏️ Edit</div>
+                            <div class="menu-item delete" onclick="deleteBookmark(${getOriginalIndex(bookmark)})">🗑️ Delete</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle category section collapse/expand
+        function toggleCategorySection(categoryId) {
+            const content = document.getElementById(`${categoryId}-content`);
+            const toggle = document.getElementById(`${categoryId}-toggle`);
+            const header = toggle.closest('.category-header');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                toggle.classList.remove('collapsed');
+                header.classList.remove('collapsed');
+                toggle.textContent = '▼';
+            } else {
+                content.classList.add('collapsed');
+                toggle.classList.add('collapsed');
+                header.classList.add('collapsed');
+                toggle.textContent = '▶';
+            }
+        }
+
+        // Get original index of filtered bookmark
+        function getOriginalIndex(bookmark) {
+            return bookmarks.findIndex(b => 
+                b.title === bookmark.title && 
+                b.url === bookmark.url && 
+                b.category === bookmark.category &&
+                JSON.stringify(b.tags || []) === JSON.stringify(bookmark.tags || [])
+            );
+        }
+
+        // Toggle menu dropdown
+        function toggleMenu(index) {
+            const menu = document.getElementById(`menu-${index}`);
+            const isShowing = menu.classList.contains('show');
+            
+            // Hide all menus
+            document.querySelectorAll('.menu-dropdown').forEach(m => m.classList.remove('show'));
+            
+            // Show this menu if it wasn't showing
+            if (!isShowing) {
+                menu.classList.add('show');
+            }
+        }
+
+        // Update category filter buttons
+        function updateCategoryFilter() {
+            const categories = ['All', ...new Set(bookmarks.map(b => b.category))];
+            const filterContainer = document.getElementById('categoryFilter');
+            
+            filterContainer.innerHTML = categories.map(cat => {
+                const count = cat === 'All' ? bookmarks.length : bookmarks.filter(b => b.category === cat).length;
+                return `
+                    <button class="category-btn ${cat === currentFilter ? 'active' : ''}" 
+                            onclick="filterCategory('${cat}')">${cat}${count > 0 ? `<span class="filter-count">${count}</span>` : ''}</button>
+                `;
+            }).join('');
+        }
+
+        // Update tag filter buttons
+        function updateTagFilter() {
+            const allTags = [...new Set(bookmarks.flatMap(b => b.tags || []))];
+            const environmentTags = getEnvironmentTags();
+            const logicControls = document.getElementById('logicControls');
+            const logicControlsColumn = document.querySelector('.logic-controls-column');
+            
+            // Separate environment tags from user tags
+            const envTagsLower = environmentTags.map(tag => tag.toLowerCase());
+            const userTags = allTags.filter(tag => !envTagsLower.includes(tag.toLowerCase()));
+            
+            // Sort user tags by count then name
+            const userTagData = userTags.map(tag => ({
+                name: tag,
+                count: bookmarks.filter(b => b.tags && b.tags.some(t => t.toLowerCase() === tag.toLowerCase())).length
+            })).sort((a, b) => {
+                if (b.count !== a.count) return b.count - a.count;
+                return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            });
+            
+            // Update environment tags container (always visible)
+            const environmentTagsContainer = document.getElementById('environmentTags');
+            const envTagsHTML = environmentTags.filter(envTag => 
+                allTags.some(tag => tag.toLowerCase() === envTag.toLowerCase())
+            ).map(envTag => {
+                const actualTag = allTags.find(tag => tag.toLowerCase() === envTag.toLowerCase());
+                const count = bookmarks.filter(b => b.tags && b.tags.some(t => t.toLowerCase() === envTag.toLowerCase())).length;
+                const isActive = currentTagFilters.some(t => t.toLowerCase() === envTag.toLowerCase());
+                const activeClass = isActive ? (tagLogic === 'AND' ? 'and-active' : 'active') : '';
+                return `
+                    <button class="tag-btn ${activeClass}" 
+                            onclick="toggleTagFilter('${actualTag || envTag}')">${actualTag || envTag}<span class="filter-count">${count}</span></button>
+                `;
+            }).join('');
+            
+            environmentTagsContainer.innerHTML = envTagsHTML;
+            
+            // Update user tags container
+            const userTagsContainer = document.getElementById('userTags');
+            const userTagsHTML = userTagData.map(tagObj => {
+                const isActive = currentTagFilters.some(t => t.toLowerCase() === tagObj.name.toLowerCase());
+                const activeClass = isActive ? (tagLogic === 'AND' ? 'and-active' : 'active') : '';
+                return `
+                    <button class="tag-btn ${activeClass}" 
+                            onclick="toggleTagFilter('${tagObj.name}')">${tagObj.name}<span class="filter-count">${tagObj.count}</span></button>
+                `;
+            }).join('');
+            
+            userTagsContainer.innerHTML = userTagsHTML;
+            
+            // Show/hide logic controls column based on whether there are any tags
+            if (allTags.length > 0) {
+                logicControlsColumn.style.display = 'flex';
+                
+                // Enable/disable logic controls based on whether any tags are selected
+                if (currentTagFilters.length > 0) {
+                    logicControls.classList.remove('disabled');
+                } else {
+                    logicControls.classList.add('disabled');
+                }
+            } else {
+                logicControlsColumn.style.display = 'none';
+            }
+        }
+
+        // New functions for enhanced filtering
+        function toggleTagFilter(tag) {
+            const index = currentTagFilters.findIndex(t => t.toLowerCase() === tag.toLowerCase());
+            
+            if (index >= 0) {
+                // Remove tag from filters
+                currentTagFilters.splice(index, 1);
+            } else {
+                // Add tag to filters
+                currentTagFilters.push(tag);
+            }
+            
+            updateTagFilter();
+            renderBookmarks();
+        }
+
+        function addTagFilter(tag) {
+            if (!currentTagFilters.some(t => t.toLowerCase() === tag.toLowerCase())) {
+                currentTagFilters.push(tag);
+                updateTagFilter();
+                renderBookmarks();
+            }
+        }
+
+        function clearTagFilters() {
+            currentTagFilters = [];
+            updateTagFilter();
+            renderBookmarks();
+        }
+
+        function setTagLogic(logic) {
+            tagLogic = logic;
+            
+            // Update logic buttons
+            document.querySelectorAll('.logic-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === logic) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            updateTagFilter();
+            renderBookmarks();
+        }
+
+        function clearAllFilters() {
+            currentFilter = 'All';
+            currentTagFilters = [];
+            document.getElementById('searchInput').value = '';
+            
+            // Reset search icons
+            const searchIcon = document.getElementById('searchIcon');
+            const clearBtn = document.getElementById('searchClearBtn');
+            searchIcon.style.display = 'block';
+            clearBtn.style.display = 'none';
+            
+            updateCategoryFilter();
+            updateTagFilter();
+            renderBookmarks();
+        }
+
+        function updateActiveFiltersDisplay() {
+            const container = document.getElementById('activeFilters');
+            const filters = [];
+            
+            if (currentFilter !== 'All') {
+                filters.push(`Category: ${currentFilter}`);
+            }
+            
+            if (currentTagFilters.length > 0) {
+                const tagText = currentTagFilters.join(tagLogic === 'AND' ? ' AND ' : ' OR ');
+                filters.push(`Tags: ${tagText} (${tagLogic})`);
+            }
+            
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (searchTerm) {
+                filters.push(`Search: "${searchTerm}"`);
+            }
+            
+            if (filters.length > 0) {
+                container.innerHTML = filters.map(filter => 
+                    `<span class="filter-indicator">${filter}</span>`
+                ).join('');
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        // Filter by category
+        function filterCategory(category) {
+            // Toggle filter: if clicking the same category that's already active, reset to 'All'
+            if (currentFilter === category && category !== 'All') {
+                currentFilter = 'All';
+            } else {
+                currentFilter = category;
+            }
+            
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Find and activate the correct button
+            const targetBtn = [...document.querySelectorAll('.category-btn')].find(btn => 
+                btn.textContent.replace(/\d+$/, '').trim() === currentFilter ||
+                (currentFilter === 'All' && btn.onclick.toString().includes("'All'"))
+            );
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+            }
+            
+            renderBookmarks();
+        }
+
+        // Filter by tag (legacy function - now redirects to new system)
+        function filterTag(tag) {
+            if (tag === 'All') {
+                clearTagFilters();
+            } else {
+                // Clear existing and set single tag
+                currentTagFilters = [tag];
+                updateTagFilter();
+                renderBookmarks();
+            }
+        }
+
+        // Handle search
+        function handleSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchIcon = document.getElementById('searchIcon');
+            const clearBtn = document.getElementById('searchClearBtn');
+            
+            // Toggle between search icon and clear button based on input content
+            if (searchInput.value.trim()) {
+                searchIcon.style.display = 'none';
+                clearBtn.style.display = 'block';
+            } else {
+                searchIcon.style.display = 'block';
+                clearBtn.style.display = 'none';
+            }
+            
+            renderBookmarks();
+        }
+
+        // Clear search function
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchIcon = document.getElementById('searchIcon');
+            const clearBtn = document.getElementById('searchClearBtn');
+            
+            searchInput.value = '';
+            searchIcon.style.display = 'block';
+            clearBtn.style.display = 'none';
+            
+            renderBookmarks();
+        }
+
+        // Tags input handling
+        function handleTagsInput(e) {
+            const value = e.target.value;
+            const lastChar = value[value.length - 1];
+            
+            if (lastChar === ',' || lastChar === ' ') {
+                addTagFromInput();
+            } else {
+                showTagSuggestions();
+            }
+        }
+
+        function handleTagsKeydown(e) {
+            if (e.key === 'Enter' || e.key === 'Tab') {
+                e.preventDefault();
+                addTagFromInput();
+            } else if (e.key === 'Backspace' && e.target.value === '' && currentBookmarkTags.length > 0) {
+                currentBookmarkTags.pop();
+                updateCurrentTags();
+            }
+        }
+
+        function addTagFromInput() {
+            const input = document.getElementById('bookmarkTags');
+            const value = input.value.trim().replace(/[, ]+$/, '');
+            
+            if (value && !currentBookmarkTags.includes(value.toLowerCase())) {
+                currentBookmarkTags.push(value.toLowerCase());
+                updateCurrentTags();
+            }
+            
+            input.value = '';
+            document.getElementById('tagsSuggestions').style.display = 'none';
+        }
+
+        function addTag(tag) {
+            if (!currentBookmarkTags.includes(tag.toLowerCase())) {
+                currentBookmarkTags.push(tag.toLowerCase());
+                updateCurrentTags();
+            }
+            document.getElementById('bookmarkTags').value = '';
+            document.getElementById('tagsSuggestions').style.display = 'none';
+        }
+
+        function removeTag(tag) {
+            currentBookmarkTags = currentBookmarkTags.filter(t => t !== tag);
+            updateCurrentTags();
+        }
+
+        function updateCurrentTags() {
+            const container = document.getElementById('currentTags');
+            container.innerHTML = currentBookmarkTags.map(tag => `
+                <span class="current-tag">
+                    ${tag}
+                    <span class="remove-tag" onclick="removeTag('${tag}')">×</span>
+                </span>
+            `).join('');
+        }
+
+        function showTagSuggestions() {
+            const input = document.getElementById('bookmarkTags');
+            const suggestions = document.getElementById('tagsSuggestions');
+            const value = input.value.toLowerCase().trim();
+            
+            // Get existing tags from bookmarks
+            const existingTags = [...new Set(bookmarks.flatMap(b => b.tags || []))];
+            const allTags = [...new Set([...commonTags, ...existingTags])];
+            
+            const filteredTags = allTags.filter(tag => 
+                tag.toLowerCase().includes(value) && 
+                !currentBookmarkTags.includes(tag.toLowerCase())
+            ).slice(0, 8);
+            
+            if (filteredTags.length > 0) {
+                suggestions.innerHTML = filteredTags.map(tag => 
+                    `<div class="tag-suggestion" onclick="addTag('${tag}')">${tag}</div>`
+                ).join('');
+                suggestions.style.display = 'block';
+            } else {
+                suggestions.style.display = 'none';
+            }
+        }
+
+        // Modal functions
+        function openModal() {
+            editingIndex = -1;
+            currentBookmarkTags = [];
+            document.getElementById('modalTitle').textContent = 'Add New Bookmark';
+            document.getElementById('bookmarkForm').reset();
+            
+            // Reset icon picker to default
+            const preview = document.getElementById('iconPreview');
+            preview.innerHTML = '<i class="fas fa-globe"></i>';
+            document.getElementById('bookmarkIcon').value = 'fas fa-globe';
+            
+            updateCurrentTags();
+            document.getElementById('bookmarkModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('bookmarkModal').style.display = 'none';
+        }
+
+        // Edit bookmark
+        function editBookmark(index) {
+            editingIndex = index;
+            const bookmark = bookmarks[index];
+            
+            document.getElementById('modalTitle').textContent = 'Edit Bookmark';
+            document.getElementById('bookmarkTitle').value = bookmark.title;
+            document.getElementById('bookmarkUrl').value = bookmark.url;
+            document.getElementById('bookmarkIcon').value = bookmark.icon || 'fas fa-globe';
+            document.getElementById('bookmarkCategory').value = bookmark.category;
+            
+            // Update icon preview
+            const preview = document.getElementById('iconPreview');
+            preview.innerHTML = getIconHTML(bookmark.icon || 'fas fa-globe');
+            
+            // Re-initialize icon libraries for the preview
+            if (bookmark.icon && bookmark.icon.includes('lucide:') && typeof lucide !== 'undefined') {
+                setTimeout(() => lucide.createIcons(), 10);
+            }
+            if (bookmark.icon && bookmark.icon.includes('feather:') && typeof feather !== 'undefined') {
+                setTimeout(() => feather.replace(), 10);
+            }
+            
+            currentBookmarkTags = bookmark.tags ? [...bookmark.tags] : [];
+            updateCurrentTags();
+            
+            document.getElementById('bookmarkModal').style.display = 'block';
+        }
+
+        // Delete bookmark
+        function deleteBookmark(index) {
+            if (confirm('Are you sure you want to delete this bookmark?')) {
+                bookmarks.splice(index, 1);
+                saveBookmarks();
+                incrementChangesCount('deletion');
+                renderBookmarks();
+                updateCategoryFilter();
+                updateTagFilter();
+            }
+        }
+
+        // Settings functions
+        function openSettingsModal() {
+            // Clear any previous messages
+            document.getElementById('settingsMessage').innerHTML = '';
+            
+            // Load current settings into form
+            document.getElementById('categoriesList').value = settings.categories || defaultSettings.categories;
+            document.getElementById('environmentTagsList').value = settings.environmentTags || defaultSettings.environmentTags;
+            document.getElementById('organizeByCategoryCheckbox').checked = settings.organizeByCategory || defaultSettings.organizeByCategory;
+            document.getElementById('settingsModal').style.display = 'block';
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function saveSettings() {
+            // Get form values
+            settings.categories = document.getElementById('categoriesList').value.trim() || defaultSettings.categories;
+            settings.environmentTags = document.getElementById('environmentTagsList').value.trim() || defaultSettings.environmentTags;
+            settings.organizeByCategory = document.getElementById('organizeByCategoryCheckbox').checked;
+            
+            // Save settings
+            const settingsSaved = saveSettingsToStorage();
+            if (settingsSaved) {
+                showSettingsMessage('Settings saved successfully!', 'info');
+            } else {
+                showSettingsMessage('Settings saved but there was an issue with local storage.', 'warning');
+            }
+            
+            // Update UI elements that depend on settings
+            populateCategorySelect();
+            updateCategoryFilter();
+            updateTagFilter();
+            renderBookmarks(); // Re-render to apply organization mode
+            closeSettingsModal();
+        }
+
+
+
+        // Export bookmarks to YAML
+        function exportToYAML() {
+            if (bookmarks.length === 0) {
+                alert('No bookmarks to export!');
+                return;
+            }
+
+            const categories = {};
+            bookmarks.forEach(bookmark => {
+                const category = bookmark.category || 'General';
+                if (!categories[category]) {
+                    categories[category] = [];
+                }
+                categories[category].push(bookmark);
+            });
+
+            let yamlContent = `# Personal Bookmarks\n# Generated on ${new Date().toISOString()}\n\n`;
+            
+            Object.keys(categories).forEach(category => {
+                yamlContent += `${category}:\n`;
+                categories[category].forEach(bookmark => {
+                    const hasNotes = bookmark.tags && bookmark.tags.length > 0;
+                    if (hasNotes) {
+                        yamlContent += `  - ${bookmark.title}:\n`;
+                        yamlContent += `    - ${bookmark.url}\n`;
+                        yamlContent += `    - "Tags: ${bookmark.tags.join(', ')}${bookmark.icon && bookmark.icon !== '🌐' ? ' | Icon: ' + bookmark.icon : ''}"\n`;
+                    } else {
+                        yamlContent += `  - ${bookmark.title}: ${bookmark.url}\n`;
+                    }
+                });
+                yamlContent += '\n';
+            });
+            
+            const blob = new Blob([yamlContent], { type: 'text/yaml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bookmarks_${new Date().toISOString().split('T')[0]}.yaml`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            // Reset the new bookmarks counter after export
+            resetChangesCount();
+        }
+
+        // Import bookmarks from YAML (file picker)
+        function importFromYAML() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.yaml,.yml';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const yamlText = event.target.result;
+                        const yamlData = parseYAMLBookmarks(yamlText);
+                        const importedBookmarks = yamlData.bookmarks;
+                        const importedCategories = yamlData.categories;
+                        
+                        if (importedBookmarks.length === 0) {
+                            alert('No valid bookmarks found in the YAML file.');
+                            return;
+                        }
+                        
+                        if (confirm(`Import ${importedBookmarks.length} bookmarks? This will merge with existing bookmarks and update categories.`)) {
+                            // Update categories setting with imported categories
+                            if (importedCategories.length > 0) {
+                                settings.categories = importedCategories.join(',');
+                                saveSettingsToStorage();
+                            }
+                            
+                            const existingUrls = new Set(bookmarks.map(b => b.url));
+                            const newBookmarks = importedBookmarks.filter(b => !existingUrls.has(b.url));
+                            
+                            bookmarks = [...bookmarks, ...newBookmarks];
+                            saveBookmarks();
+                            populateCategorySelect(); // Update category dropdown
+                            renderBookmarks();
+                            updateCategoryFilter();
+                            updateTagFilter();
+                            
+                            // Don't count imports as changes - reset counter after import
+                            resetChangesCount();
+                            
+                            alert(`Successfully imported ${newBookmarks.length} new bookmarks! Categories updated: ${importedCategories.join(', ')}`);
+                        }
+                    } catch (error) {
+                        alert('Error parsing YAML file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // YAML parser for bookmarks
+        function parseYAMLBookmarks(yamlText) {
+            const bookmarks = [];
+            const categories = new Set();
+            const lines = yamlText.split('\n');
+            let currentCategory = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                
+                if (line.match(/^[A-Za-z][^:]*:$/) && !line.startsWith(' ') && !line.startsWith('\t')) {
+                    currentCategory = line.replace(':', '').trim();
+                    categories.add(currentCategory);
+                    continue;
+                }
+                
+                if (line.match(/^  - /)) {
+                    const bookmarkLine = line.replace(/^  - /, '');
+                    
+                    if (bookmarkLine.includes(': ') && !bookmarkLine.endsWith(':')) {
+                        const [title, url] = bookmarkLine.split(': ', 2);
+                        if (title && url) {
+                            bookmarks.push({
+                                title: title.trim(),
+                                url: url.trim(),
+                                category: currentCategory || 'General',
+                                icon: '🌐',
+                                tags: []
+                            });
+                        }
+                    } else if (bookmarkLine.endsWith(':')) {
+                        const title = bookmarkLine.replace(':', '').trim();
+                        let url = '';
+                        let tags = [];
+                        let icon = '🌐';
+                        
+                        let j = i + 1;
+                        while (j < lines.length && lines[j].match(/^    - /)) {
+                            const subLine = lines[j].replace(/^    - /, '').trim();
+                            
+                            if (subLine.startsWith('http') || subLine.startsWith('www.') || subLine.includes('://')) {
+                                url = subLine;
+                            } else {
+                                const notesLine = subLine.replace(/^"|"$/g, '');
+                                
+                                const tagsMatch = notesLine.match(/Tags:\s*([^|]+)/);
+                                if (tagsMatch) {
+                                    tags = tagsMatch[1].split(',').map(t => t.trim()).filter(t => t);
+                                }
+                                
+                                const iconMatch = notesLine.match(/Icon:\s*(.+)$/);
+                                if (iconMatch) {
+                                    icon = iconMatch[1].trim();
+                                }
+                            }
+                            j++;
+                        }
+                        
+                        if (title && url) {
+                            bookmarks.push({
+                                title: title,
+                                url: url,
+                                category: currentCategory || 'General',
+                                icon: icon,
+                                tags: tags
+                            });
+                        }
+                        
+                        i = j - 1;
+                    }
+                }
+            }
+            
+            const filteredBookmarks = bookmarks.filter(b => b.title && b.url);
+            
+            return {
+                bookmarks: filteredBookmarks,
+                categories: Array.from(categories)
+            };
+        }
+
+        // Handle form submission
+        document.getElementById('bookmarkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Add any remaining text in tags input
+            const tagsInput = document.getElementById('bookmarkTags');
+            if (tagsInput.value.trim()) {
+                const remainingTags = tagsInput.value.split(/[, ]+/).filter(t => t.trim());
+                remainingTags.forEach(tag => {
+                    if (tag && !currentBookmarkTags.includes(tag.toLowerCase())) {
+                        currentBookmarkTags.push(tag.toLowerCase());
+                    }
+                });
+            }
+            
+            const bookmark = {
+                title: document.getElementById('bookmarkTitle').value,
+                url: document.getElementById('bookmarkUrl').value,
+                icon: document.getElementById('bookmarkIcon').value || 'fas fa-globe',
+                category: document.getElementById('bookmarkCategory').value,
+                tags: [...currentBookmarkTags]
+            };
+            
+            if (editingIndex >= 0) {
+                bookmarks[editingIndex] = bookmark;
+                // Track edit as a change
+                incrementChangesCount('edit');
+            } else {
+                bookmarks.push(bookmark);
+                // Increment counter only for new bookmarks, not edits
+                incrementChangesCount('addition');
+            }
+            
+            saveBookmarks();
+            closeModal();
+            renderBookmarks();
+            updateCategoryFilter();
+            updateTagFilter();
+        });
+
+        // Close modals when clicking outside
+        document.getElementById('bookmarkModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('settingsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSettingsModal();
+            }
+        });
+
+        // Initialize the app when page loads
+        init();
+    </script>
+</body>
+</html>
