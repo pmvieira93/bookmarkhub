@@ -912,6 +912,230 @@
             margin-top: 20px;
         }
 
+        /* Clock Widget Styling */
+        .clock-widget {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 180px;
+        }
+
+        .clock-time {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: white;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .clock-date {
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 400;
+        }
+
+        .clock-timezone {
+            font-size: 0.65em;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        /* Multi-timezone clock styling - World Time Buddy style */
+        .clock-widget.multi-timezone {
+            min-width: 450px;
+            max-width: 600px;
+            padding: 6px 12px;
+        }
+
+        .wtb-style-clock {
+            width: 100%;
+        }
+
+        .wtb-header {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .wtb-location-col {
+            width: 90px;
+            font-size: 0.55em;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 600;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-top: 2px;
+        }
+
+        .wtb-time-cols {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .wtb-time-header {
+            flex: 1;
+            text-align: center;
+            font-size: 0.5em;
+            color: rgba(255, 255, 255, 0.65);
+            font-weight: 500;
+            line-height: 1.1;
+            padding: 1px;
+        }
+
+        .wtb-time-header strong {
+            display: block;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1px;
+        }
+
+        .wtb-row {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 3px;
+            align-items: stretch;
+            border-radius: 4px;
+            padding: 0;
+        }
+
+        .wtb-location-info {
+            width: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0px;
+        }
+
+        .wtb-location {
+            font-size: 0.6em;
+            color: white;
+            font-weight: 700;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.1;
+        }
+
+        .wtb-location-date {
+            font-size: 0.5em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            text-align: left;
+            line-height: 1.1;
+        }
+
+        .wtb-times {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .wtb-time-cell {
+            flex: 1;
+            text-align: center;
+            padding: 4px 2px;
+            border-radius: 4px;
+            font-size: 0.58em;
+            font-weight: 600;
+            color: white;
+            background: rgba(255, 255, 255, 0.12);
+            font-family: 'Courier New', monospace;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .wtb-time-cell .time-value {
+            font-size: 1.05em;
+        }
+
+        .wtb-time-cell .time-period {
+            font-size: 0.72em;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        .wtb-time-cell.current {
+            background: rgba(54, 54, 54, 0.35);
+            border: 2px solid rgba(54, 54, 54, 0.8);
+            box-shadow: 0 0 8px rgba(54, 54, 54, 0.5);
+            font-weight: 700;
+            padding-bottom: 8px;
+        }
+
+        .wtb-time-cell.current::after {
+            content: 'NOW';
+            position: absolute;
+            bottom: -3.5px;
+            font-size: 0.8em;
+            background: rgba(54, 54, 54, 0.9);
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .wtb-time-cell.night {
+            background: rgba(0, 0, 0, 0.45);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .wtb-time-cell.night .time-period {
+            color: rgba(139, 92, 246, 0.8);
+        }
+
+        .wtb-time-cell.morning {
+            background: rgba(255, 193, 7, 0.2);
+        }
+
+        .wtb-time-cell.afternoon {
+            background: rgba(33, 150, 243, 0.2);
+        }
+
+        .wtb-date-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 3px;
+            padding-top: 3px;
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .wtb-date-label {
+            width: 75px;
+            font-size: 0.55em;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .wtb-dates {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .wtb-date-cell {
+            flex: 1;
+            text-align: center;
+            font-size: 0.55em;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
         /* Checkbox styling */
         #organizeByCategoryCheckbox {
             width: 16px;
@@ -1135,6 +1359,12 @@
                 <h1>🔗 Bookmarks Manager</h1>
                 <p>Better organization for your daily work</p>
             </div>
+            <!-- Custom Clock Widget - Hidden by default -->
+            <div class="clock-widget" id="clockWidget" style="display: none;">
+                <div id="multiClockView" style="width: 100%;">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
             <div class="theme-switcher">
                 <button class="theme-option" data-theme="light">Light</button>
                 <button class="theme-option" data-theme="grey">Grey</button>
@@ -1282,6 +1512,23 @@
                 <small>When enabled, bookmarks will be grouped into collapsible category sections</small>
             </div>
             
+            <div class="form-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="enableMultiTimezoneCheckbox">
+                    Enable Multi-Timezone Clock
+                </label>
+                <small>Show multiple timezones in a World Time Buddy style grid in the header</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="timezonesList">
+                    Timezones (comma separated)
+                    <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" title="View available timezone identifiers" style="margin-left: 8px; text-decoration: none; font-size: 0.9em;">ℹ️</a>
+                </label>
+                <textarea id="timezonesList" rows="3" placeholder="Europe/Lisbon|Lisbon,America/Los_Angeles|PST,Australia/Melbourne|Melbourne,Europe/Berlin|Germany"></textarea>
+                <small>Format: TimeZone|Label (comma separated). Examples: America/New_York|EST, Europe/London|London, Asia/Tokyo|Tokyo. Default is UTC.</small>
+            </div>
+            
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeSettingsModal()">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
@@ -1294,7 +1541,9 @@
         const defaultSettings = {
             categories: "General,Support,Development,Personal,Apps,Documentation,Intranet,Tools",
             environmentTags: "",
-            organizeByCategory: false
+            organizeByCategory: false,
+            enableMultiTimezone: false,
+            timezones: ""
         };
 
         // Theme management
@@ -1394,15 +1643,167 @@
         // Common tags for suggestions
         const commonTags = ['prod', 'dev', 'int', 'test', 'staging', 'api', 'frontend', 'backend', 'database', 'admin', 'monitoring', 'docs', 'ci/cd', 'mobile', 'web'];
 
+        // Clock Widget Functions
+        function updateClock() {
+            if (!settings.enableMultiTimezone) {
+                return; // Don't update if clock is disabled
+            }
+            updateMultiTimezoneClock();
+        }
+
+        function updateMultiTimezoneClock() {
+            const now = new Date();
+            const timezones = parseTimezones();
+            const multiClockView = document.getElementById('multiClockView');
+            
+            // Build improved World Time Buddy style layout
+            let html = '<div class="wtb-style-clock">';
+            
+            // Header row - simple column headers
+            html += '<div class="wtb-header">';
+            html += '<div class="wtb-location-col">TIMEZONE</div>';
+            html += '<div class="wtb-time-cols">';
+            html += '<div class="wtb-time-header">-1h</div>';
+            html += '<div class="wtb-time-header"><strong>NOW</strong></div>';
+            html += '<div class="wtb-time-header">+1h</div>';
+            html += '<div class="wtb-time-header">+2h</div>';
+            html += '</div></div>';
+            
+            // Timezone rows - each shows its own context
+            timezones.forEach(tz => {
+                html += '<div class="wtb-row">';
+                
+                // Get current date for this timezone - use the now object directly with timezone option
+                const tzDateStr = now.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    timeZone: tz.zone 
+                });
+                
+                html += '<div class="wtb-location-info">';
+                html += `<div class="wtb-location" title="${tz.zone}">${tz.label}</div>`;
+                html += `<div class="wtb-location-date">${tzDateStr}</div>`;
+                html += '</div>';
+                
+                html += '<div class="wtb-times">';
+                
+                // Generate time slots: -1h, now, +1h, +2h
+                for (let offset = -1; offset <= 2; offset++) {
+                    const slotTime = new Date(now.getTime() + offset * 60 * 60 * 1000);
+                    
+                    // Get hour, minute, second directly using toLocaleString with timezone
+                    const timeString = slotTime.toLocaleString('en-US', { 
+                        timeZone: tz.zone,
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    });
+                    
+                    const [hourStr, minuteStr, secondStr] = timeString.split(':');
+                    const hour = parseInt(hourStr, 10);
+                    const minutes = minuteStr;
+                    const seconds = secondStr;
+                    
+                    // Determine time period
+                    const isNight = hour >= 22 || hour < 6;
+                    const isMorning = hour >= 6 && hour < 12;
+                    const isAfternoon = hour >= 12 && hour < 18;
+                    const isCurrent = offset === 0;
+                    
+                    // Build class list
+                    let cellClass = 'wtb-time-cell';
+                    if (isCurrent) cellClass += ' current';
+                    if (isNight) cellClass += ' night';
+                    else if (isMorning) cellClass += ' morning';
+                    else if (isAfternoon) cellClass += ' afternoon';
+                    
+                    // Format time
+                    const displayHour = hour % 12 || 12;
+                    const period = hour >= 12 ? 'PM' : 'AM';
+                    
+                    // Build cell content
+                    if (isCurrent) {
+                        // Show seconds for current time
+                        html += `<div class="${cellClass}">
+                            <div class="time-value">${displayHour}:${minutes}:${seconds}</div>
+                            <div class="time-period">${period}</div>
+                        </div>`;
+                    } else {
+                        html += `<div class="${cellClass}">
+                            <div class="time-value">${displayHour}:${minutes}</div>
+                            <div class="time-period">${period}</div>
+                        </div>`;
+                    }
+                }
+                
+                html += '</div></div>';
+            });
+            
+            html += '</div>';
+            
+            multiClockView.innerHTML = html;
+        }
+
+        function parseTimezones() {
+            // If timezones setting is empty or just whitespace, use UTC as default
+            if (!settings.timezones || settings.timezones.trim() === '') {
+                return [{ zone: 'UTC', label: 'UTC' }];
+            }
+            
+            // Parse user-provided timezones, limit to max 5
+            const userTimezones = settings.timezones.split(',')
+                .map(tz => {
+                    const parts = tz.trim().split('|');
+                    const zone = parts[0] ? parts[0].trim() : '';
+                    const label = parts[1] ? parts[1].trim() : zone;
+                    return { zone, label };
+                })
+                .filter(tz => tz.zone) // Filter out any empty entries
+                .slice(0, 5); // Limit to max 5 timezones
+            
+            // If no valid timezones parsed, return UTC
+            if (userTimezones.length === 0) {
+                return [{ zone: 'UTC', label: 'UTC' }];
+            }
+            
+            return userTimezones;
+        }
+
+        function toggleClockView() {
+            const clockWidget = document.getElementById('clockWidget');
+            
+            if (settings.enableMultiTimezone) {
+                clockWidget.style.display = 'flex';
+                clockWidget.classList.add('multi-timezone');
+            } else {
+                clockWidget.style.display = 'none';
+                clockWidget.classList.remove('multi-timezone');
+            }
+        }
+
+        function initClock() {
+            toggleClockView();
+            if (settings.enableMultiTimezone) {
+                updateClock(); // Initial call
+                window.clockInterval = setInterval(updateClock, 1000); // Update every second
+            }
+        }
+
         // Initialize the app
         function init() {
             // Initialize theme first
             initializeTheme();
             setupThemeSwitcher();
             
+            // Load settings BEFORE initializing clock
             loadSettings();
             loadBookmarks();
             loadExportTracking(); // Load export tracking data
+            
+            // Initialize clock AFTER settings are loaded
+            initClock();
+            
             renderBookmarks();
             updateCategoryFilter();
             updateTagFilter();
@@ -2356,6 +2757,8 @@
             document.getElementById('categoriesList').value = settings.categories || defaultSettings.categories;
             document.getElementById('environmentTagsList').value = settings.environmentTags || defaultSettings.environmentTags;
             document.getElementById('organizeByCategoryCheckbox').checked = settings.organizeByCategory || defaultSettings.organizeByCategory;
+            document.getElementById('enableMultiTimezoneCheckbox').checked = settings.enableMultiTimezone || defaultSettings.enableMultiTimezone;
+            document.getElementById('timezonesList').value = settings.timezones || defaultSettings.timezones;
             document.getElementById('settingsModal').style.display = 'block';
         }
 
@@ -2368,21 +2771,56 @@
             settings.categories = document.getElementById('categoriesList').value.trim() || defaultSettings.categories;
             settings.environmentTags = document.getElementById('environmentTagsList').value.trim() || defaultSettings.environmentTags;
             settings.organizeByCategory = document.getElementById('organizeByCategoryCheckbox').checked;
+            settings.enableMultiTimezone = document.getElementById('enableMultiTimezoneCheckbox').checked;
+            
+            // Handle timezone setting - keep user input as is, but trim whitespace
+            const timezonesInput = document.getElementById('timezonesList').value.trim();
+            settings.timezones = timezonesInput;
+            
+            // Validate max 5 timezones
+            if (timezonesInput) {
+                const timezoneCount = timezonesInput.split(',').filter(tz => tz.trim()).length;
+                if (timezoneCount > 5) {
+                    showSettingsMessage('Maximum 5 timezones allowed. Only the first 5 will be used.', 'warning');
+                }
+            }
             
             // Save settings
             const settingsSaved = saveSettingsToStorage();
-            if (settingsSaved) {
-                showSettingsMessage('Settings saved successfully!', 'info');
-            } else {
-                showSettingsMessage('Settings saved but there was an issue with local storage.', 'warning');
-            }
             
             // Update UI elements that depend on settings
             populateCategorySelect();
             updateCategoryFilter();
             updateTagFilter();
             renderBookmarks(); // Re-render to apply organization mode
-            closeSettingsModal();
+            
+            // Update clock view - need to reinitialize if enabling for first time
+            toggleClockView();
+            if (settings.enableMultiTimezone) {
+                updateClock();
+                // Restart the interval if it wasn't running
+                clearInterval(window.clockInterval);
+                window.clockInterval = setInterval(updateClock, 1000);
+            } else {
+                // Stop the interval if disabling
+                if (window.clockInterval) {
+                    clearInterval(window.clockInterval);
+                }
+            }
+            
+            if (settingsSaved) {
+                showSettingsMessage('Settings saved successfully!', 'info');
+                // Close modal after brief delay to show success message
+                setTimeout(() => {
+                    closeSettingsModal();
+                }, 800);
+            } else {
+                showSettingsMessage('Settings saved but there was an issue with local storage.', 'warning');
+                // Still close modal but with longer delay for warning
+                setTimeout(() => {
+                    closeSettingsModal();
+                }, 1500);
+            }
         }
 
 
