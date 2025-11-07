@@ -788,6 +788,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            margin-top: 8vh;
         }
 
         .modal-body {
@@ -795,6 +796,30 @@
             flex: 1;
             padding-right: 8px;
             margin-bottom: 16px;
+        }
+
+        /* Custom scrollbar for modal */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--border-secondary);
+            border-radius: 3px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Firefox scrollbar */
+        .modal-body {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-secondary) transparent;
         }
 
         .modal h3 {
