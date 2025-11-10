@@ -2348,17 +2348,17 @@
             enableMultiTimezone: false,
             timezones: "",
             // Widget panel settings
-            enableWidgetPanel: true,
-            enableClockWidget: true,
-            enableTimerWidget: true,
-            enableTodoWidget: true,
+            enableWidgetPanel: false,
+            enableClockWidget: false,
+            enableTimerWidget: false,
+            enableTodoWidget: false,
             // Timer widget settings
             timerPreset1: 60,  // minutes
             timerPreset2: 30,  // minutes
             timerPreset3: 30,  // seconds
-            timerSound: true,
-            timerNotification: true,
-            timerShowPresets: true
+            timerSound: false,
+            timerNotification: false,
+            timerShowPresets: false
         };
 
         // Theme management
@@ -4227,6 +4227,28 @@
 
             let yamlContent = `# Personal Bookmarks\n# Generated on ${new Date().toISOString()}\n\n`;
             
+            // Export settings section
+            yamlContent += `# Settings Configuration\n`;
+            yamlContent += `Settings:\n`;
+            yamlContent += `  categories: "${settings.categories}"\n`;
+            yamlContent += `  environmentTags: "${settings.environmentTags}"\n`;
+            yamlContent += `  organizeByCategory: ${settings.organizeByCategory}\n`;
+            yamlContent += `  enableWidgetPanel: ${settings.enableWidgetPanel !== false}\n`;
+            yamlContent += `  enableClockWidget: ${settings.enableClockWidget !== false}\n`;
+            yamlContent += `  enableTimerWidget: ${settings.enableTimerWidget !== false}\n`;
+            yamlContent += `  enableTodoWidget: ${settings.enableTodoWidget !== false}\n`;
+            yamlContent += `  enableMultiTimezone: ${settings.enableMultiTimezone || false}\n`;
+            yamlContent += `  timezones: "${settings.timezones || ''}"\n`;
+            yamlContent += `  timerPreset1: ${settings.timerPreset1 || defaultSettings.timerPreset1}\n`;
+            yamlContent += `  timerPreset2: ${settings.timerPreset2 || defaultSettings.timerPreset2}\n`;
+            yamlContent += `  timerPreset3: ${settings.timerPreset3 || defaultSettings.timerPreset3}\n`;
+            yamlContent += `  timerShowPresets: ${settings.timerShowPresets !== false}\n`;
+            yamlContent += `  timerSound: ${settings.timerSound !== false}\n`;
+            yamlContent += `  timerNotification: ${settings.timerNotification !== false}\n`;
+            yamlContent += `\n`;
+            
+            // Export bookmarks section
+            yamlContent += `# Bookmarks\n`;
             Object.keys(categories).forEach(category => {
                 yamlContent += `${category}:\n`;
                 categories[category].forEach(bookmark => {
@@ -4271,17 +4293,52 @@
                         const yamlData = parseYAMLBookmarks(yamlText);
                         const importedBookmarks = yamlData.bookmarks;
                         const importedCategories = yamlData.categories;
+                        const importedSettings = yamlData.settings;
                         
                         if (importedBookmarks.length === 0) {
                             alert('No valid bookmarks found in the YAML file.');
                             return;
                         }
                         
-                        if (confirm(`Import ${importedBookmarks.length} bookmarks? This will merge with existing bookmarks and update categories.`)) {
-                            // Update categories setting with imported categories
-                            if (importedCategories.length > 0) {
-                                settings.categories = importedCategories.join(',');
+                        const hasSettings = importedSettings && Object.keys(importedSettings).length > 0;
+                        const settingsMsg = hasSettings ? ' and settings' : '';
+                        
+                        if (confirm(`Import ${importedBookmarks.length} bookmarks${settingsMsg}? This will merge with existing bookmarks${hasSettings ? ' and completely replace your current settings' : ''}.`)) {
+                            // Import settings if available - OVERRIDE existing settings
+                            if (hasSettings) {
+                                // Reset settings to defaults first, then apply imported settings
+                                settings = {...defaultSettings};
+                                Object.keys(importedSettings).forEach(key => {
+                                    settings[key] = importedSettings[key];
+                                });
                                 saveSettingsToStorage();
+                                
+                                // Apply settings changes
+                                populateCategorySelect();
+                                updateLayoutBasedOnWidgets();
+                                updateClockWidgetVisibility();
+                                toggleClockView();
+                                
+                                if (settings.enableMultiTimezone) {
+                                    updateClock();
+                                    clearInterval(window.clockInterval);
+                                    window.clockInterval = setInterval(updateClock, 1000);
+                                } else {
+                                    if (window.clockInterval) {
+                                        clearInterval(window.clockInterval);
+                                    }
+                                }
+                                
+                                updateTimerWidgetVisibility();
+                                updateTimerPresets();
+                                updateTimerPresetsVisibility();
+                                updateTodoWidgetVisibility();
+                            } else {
+                                // Update categories setting with imported categories (legacy support)
+                                if (importedCategories.length > 0) {
+                                    settings.categories = importedCategories.join(',');
+                                    saveSettingsToStorage();
+                                }
                             }
                             
                             const existingUrls = new Set(bookmarks.map(b => b.url));
@@ -4297,7 +4354,8 @@
                             // Don't count imports as changes - reset counter after import
                             resetChangesCount();
                             
-                            alert(`Successfully imported ${newBookmarks.length} new bookmarks! Categories updated: ${importedCategories.join(', ')}`);
+                            const settingsImportMsg = hasSettings ? ' Settings have been applied!' : '';
+                            alert(`Successfully imported ${newBookmarks.length} new bookmarks!${settingsImportMsg}`);
                         }
                     } catch (error) {
                         alert('Error parsing YAML file: ' + error.message);
@@ -4313,19 +4371,61 @@
         function parseYAMLBookmarks(yamlText) {
             const bookmarks = [];
             const categories = new Set();
+            const settings = {};
             const lines = yamlText.split('\n');
             let currentCategory = '';
+            let inSettingsSection = false;
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 
-                if (line.match(/^[A-Za-z][^:]*:$/) && !line.startsWith(' ') && !line.startsWith('\t')) {
-                    currentCategory = line.replace(':', '').trim();
-                    categories.add(currentCategory);
+                // Check for Settings section
+                if (line.trim() === 'Settings:') {
+                    inSettingsSection = true;
+                    currentCategory = '';
                     continue;
                 }
                 
-                if (line.match(/^  - /)) {
+                // Parse settings
+                if (inSettingsSection && line.match(/^  [a-zA-Z]/)) {
+                    const settingLine = line.trim();
+                    const colonIndex = settingLine.indexOf(':');
+                    if (colonIndex > 0) {
+                        const key = settingLine.substring(0, colonIndex).trim();
+                        let value = settingLine.substring(colonIndex + 1).trim();
+                        
+                        // Remove quotes if present
+                        value = value.replace(/^"|"$/g, '');
+                        
+                        // Parse boolean values
+                        if (value === 'true') {
+                            settings[key] = true;
+                        } else if (value === 'false') {
+                            settings[key] = false;
+                        } else if (!isNaN(value) && value !== '') {
+                            // Parse numeric values
+                            settings[key] = Number(value);
+                        } else {
+                            // String value
+                            settings[key] = value;
+                        }
+                    }
+                    continue;
+                }
+                
+                // Regular category/bookmark parsing
+                if (line.match(/^[A-Za-z][^:]*:$/) && !line.startsWith(' ') && !line.startsWith('\t')) {
+                    const categoryName = line.replace(':', '').trim();
+                    // Skip Settings category but process others
+                    if (categoryName !== 'Settings') {
+                        currentCategory = categoryName;
+                        categories.add(currentCategory);
+                        inSettingsSection = false;
+                    }
+                    continue;
+                }
+                
+                if (line.match(/^  - /) && currentCategory && !inSettingsSection) {
                     const bookmarkLine = line.replace(/^  - /, '');
                     
                     if (bookmarkLine.includes(': ') && !bookmarkLine.endsWith(':')) {
@@ -4386,7 +4486,8 @@
             
             return {
                 bookmarks: filteredBookmarks,
-                categories: Array.from(categories)
+                categories: Array.from(categories).filter(cat => cat !== 'Settings'),
+                settings: settings
             };
         }
 
