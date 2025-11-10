@@ -1365,6 +1365,237 @@
             font-weight: 600;
         }
 
+        /* ToDo Widget Styling */
+        .todo-widget {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+            max-height: 25vh;
+        }
+
+        .todo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .todo-header h4 {
+            color: var(--text-primary);
+            font-size: 13px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .todo-counter {
+            flex: 1;
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .todo-pending {
+            color: var(--accent-primary);
+        }
+
+        .todo-total {
+            color: var(--text-secondary);
+        }
+
+        .todo-clear-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .todo-clear-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .todo-input-container {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .todo-input-container input {
+            flex: 1;
+            padding: 6px 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .todo-input-container input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px var(--focus-ring);
+        }
+
+        .todo-add-btn {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .todo-add-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .todo-list {
+            max-height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 4px;
+        }
+
+        .todo-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .todo-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb {
+            background: var(--border-secondary);
+            border-radius: 3px;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .todo-list {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-secondary) transparent;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .todo-item:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            order: 999;
+        }
+
+        .todo-checkbox {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            border: 2px solid var(--border-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .todo-checkbox:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .todo-item.completed .todo-checkbox {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .todo-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .todo-item.completed .todo-checkbox::after {
+            display: block;
+        }
+
+        .todo-text {
+            flex: 1;
+            color: var(--text-primary);
+            font-size: 12px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .todo-remove-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            opacity: 0;
+        }
+
+        .todo-item:hover .todo-remove-btn {
+            opacity: 1;
+        }
+
+        .todo-remove-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .no-todos {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
         .timer-display {
             font-size: 1.5em;
             font-weight: 600;
@@ -1848,7 +2079,7 @@
                     <h4>⏱️ Focus Timer</h4>
                     <div class="timer-display" id="timerDisplay">00:00:00</div>
                     
-                    <div class="timer-presets">
+                    <div class="timer-presets" id="timerPresets">
                         <button class="timer-preset-btn" onclick="setTimer(3600)">1h</button>
                         <button class="timer-preset-btn" onclick="setTimer(1800)">30min</button>
                         <button class="timer-preset-btn" onclick="setTimer(30)">30s</button>
@@ -1875,6 +2106,28 @@
                         <button class="timer-control-btn start" id="timerStartBtn" onclick="startTimer()">▶ Start</button>
                         <button class="timer-control-btn pause" id="timerPauseBtn" onclick="pauseTimer()" disabled>⏸ Pause</button>
                         <button class="timer-control-btn reset" id="timerResetBtn" onclick="resetTimer()">↻ Reset</button>
+                    </div>
+                </div>
+
+                <!-- ToDo Widget -->
+                <div class="todo-widget" id="todoWidget">
+                    <div class="todo-header">
+                        <h4>✓ ToDo List</h4>
+                        <div class="todo-counter" id="todoCounter">
+                            <span class="todo-pending">0</span> / <span class="todo-total">0</span>
+                        </div>
+                        <button class="todo-clear-btn" onclick="clearAllTodos()" title="Clear all tasks">🗑️</button>
+                    </div>
+                    
+                    <div class="todo-input-container">
+                        <input type="text" id="todoInput" placeholder="Add a new task..." onkeypress="if(event.key==='Enter') addTodo()">
+                        <button class="todo-add-btn" onclick="addTodo()">+</button>
+                    </div>
+                    
+                    <div class="todo-list" id="todoList">
+                        <div class="no-todos">
+                            <span>No tasks yet</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2025,6 +2278,14 @@
                             </div>
                             <div id="timerWidgetSettings" class="widget-setting-content">
                                 <div class="form-group" style="margin-left: 24px;">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="timerShowPresetsCheckbox">
+                                        Show preset buttons
+                                    </label>
+                                    <small>Display quick preset timer buttons in the widget</small>
+                                </div>
+                                
+                                <div class="form-group" style="margin-left: 24px;">
                                     <label for="timerPreset1">Preset 1 (minutes)</label>
                                     <input type="number" id="timerPreset1" min="1" max="240" placeholder="60" style="width: 100px;">
                                 </div>
@@ -2057,6 +2318,16 @@
                             </div>
                         </div>
                         
+                        <!-- ToDo Widget Settings -->
+                        <div class="widget-setting-item">
+                            <div class="widget-setting-header">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="enableTodoWidgetCheckbox">
+                                    <strong>ToDo List Widget</strong>
+                                </label>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -2080,12 +2351,14 @@
             enableWidgetPanel: true,
             enableClockWidget: true,
             enableTimerWidget: true,
+            enableTodoWidget: true,
             // Timer widget settings
             timerPreset1: 60,  // minutes
             timerPreset2: 30,  // minutes
             timerPreset3: 30,  // seconds
             timerSound: true,
-            timerNotification: true
+            timerNotification: true,
+            timerShowPresets: true
         };
 
         // Theme management
@@ -2397,6 +2670,118 @@
             });
         }
 
+        // ToDo Widget Functions
+        let todos = [];
+        let todoIdCounter = 0;
+
+        function loadTodos() {
+            const savedTodos = localStorage.getItem('bookmarks-todos');
+            if (savedTodos) {
+                todos = JSON.parse(savedTodos);
+                todoIdCounter = Math.max(...todos.map(t => t.id), 0) + 1;
+                renderTodos();
+            }
+        }
+
+        function saveTodos() {
+            localStorage.setItem('bookmarks-todos', JSON.stringify(todos));
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            
+            if (text === '') {
+                return;
+            }
+            
+            const todo = {
+                id: todoIdCounter++,
+                text: text,
+                completed: false,
+                createdAt: Date.now()
+            };
+            
+            todos.push(todo);
+            saveTodos();
+            renderTodos();
+            
+            input.value = '';
+            input.focus();
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        function removeTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveTodos();
+            renderTodos();
+        }
+
+        function clearAllTodos() {
+            if (todos.length === 0) {
+                return;
+            }
+            
+            if (confirm('Are you sure you want to clear all tasks?')) {
+                todos = [];
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            
+            // Update counter
+            updateTodoCounter();
+            
+            if (todos.length === 0) {
+                todoList.innerHTML = '<div class="no-todos"><span>No tasks yet</span></div>';
+                return;
+            }
+            
+            // Sort: incomplete tasks first, then completed tasks
+            const sortedTodos = [...todos].sort((a, b) => {
+                if (a.completed === b.completed) {
+                    return a.createdAt - b.createdAt;
+                }
+                return a.completed ? 1 : -1;
+            });
+            
+            todoList.innerHTML = sortedTodos.map(todo => `
+                <div class="todo-item ${todo.completed ? 'completed' : ''}" data-id="${todo.id}">
+                    <div class="todo-checkbox" onclick="toggleTodo(${todo.id})"></div>
+                    <div class="todo-text">${escapeHtml(todo.text)}</div>
+                    <button class="todo-remove-btn" onclick="removeTodo(${todo.id})" title="Remove task">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function updateTodoCounter() {
+            const total = todos.length;
+            const completed = todos.filter(t => t.completed).length;
+            const pending = total - completed;
+            
+            const counterElement = document.getElementById('todoCounter');
+            if (counterElement) {
+                counterElement.innerHTML = `<span class="todo-pending">${pending}</span> / <span class="todo-total">${total}</span>`;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         // Clock Widget Functions
         function updateClock() {
             if (!settings.enableMultiTimezone) {
@@ -2630,6 +3015,17 @@
             }
         }
 
+        function updateTodoWidgetVisibility() {
+            const todoWidget = document.getElementById('todoWidget');
+            if (todoWidget) {
+                if (settings.enableTodoWidget !== false) {
+                    todoWidget.style.display = 'flex';
+                } else {
+                    todoWidget.style.display = 'none';
+                }
+            }
+        }
+
         function updateTimerPresets() {
             // Update preset button labels and values
             const preset1 = settings.timerPreset1 || 60;
@@ -2656,6 +3052,17 @@
             }
         }
 
+        function updateTimerPresetsVisibility() {
+            const presetsContainer = document.getElementById('timerPresets');
+            if (presetsContainer) {
+                if (settings.timerShowPresets !== false) {
+                    presetsContainer.style.display = 'grid';
+                } else {
+                    presetsContainer.style.display = 'none';
+                }
+            }
+        }
+
         function initClock() {
             toggleClockView();
             if (settings.enableMultiTimezone) {
@@ -2667,6 +3074,8 @@
             updateClockWidgetVisibility();
             updateTimerWidgetVisibility();
             updateTimerPresets();
+            updateTimerPresetsVisibility();
+            updateTodoWidgetVisibility();
             
             // Initialize layout
             updateLayoutBasedOnWidgets();
@@ -2685,6 +3094,9 @@
             
             // Initialize clock AFTER settings are loaded
             initClock();
+            
+            // Initialize ToDo widget
+            loadTodos();
             
             renderBookmarks();
             updateCategoryFilter();
@@ -3644,12 +4056,14 @@
             document.getElementById('enableWidgetPanelCheckbox').checked = settings.enableWidgetPanel !== false;
             document.getElementById('enableClockWidgetCheckbox').checked = settings.enableClockWidget !== false;
             document.getElementById('enableTimerWidgetCheckbox').checked = settings.enableTimerWidget !== false;
+            document.getElementById('enableTodoWidgetCheckbox').checked = settings.enableTodoWidget !== false;
             
             // Clock widget settings
             document.getElementById('enableMultiTimezoneCheckbox').checked = settings.enableMultiTimezone || defaultSettings.enableMultiTimezone;
             document.getElementById('timezonesList').value = settings.timezones || defaultSettings.timezones;
             
             // Timer widget settings
+            document.getElementById('timerShowPresetsCheckbox').checked = settings.timerShowPresets !== false;
             document.getElementById('timerPreset1').value = settings.timerPreset1 || defaultSettings.timerPreset1;
             document.getElementById('timerPreset2').value = settings.timerPreset2 || defaultSettings.timerPreset2;
             document.getElementById('timerPreset3').value = settings.timerPreset3 || defaultSettings.timerPreset3;
@@ -3716,6 +4130,7 @@
             settings.enableWidgetPanel = document.getElementById('enableWidgetPanelCheckbox').checked;
             settings.enableClockWidget = document.getElementById('enableClockWidgetCheckbox').checked;
             settings.enableTimerWidget = document.getElementById('enableTimerWidgetCheckbox').checked;
+            settings.enableTodoWidget = document.getElementById('enableTodoWidgetCheckbox').checked;
             
             // Clock widget settings
             settings.enableMultiTimezone = document.getElementById('enableMultiTimezoneCheckbox').checked;
@@ -3733,6 +4148,7 @@
             }
             
             // Timer widget settings
+            settings.timerShowPresets = document.getElementById('timerShowPresetsCheckbox').checked;
             settings.timerPreset1 = parseInt(document.getElementById('timerPreset1').value) || defaultSettings.timerPreset1;
             settings.timerPreset2 = parseInt(document.getElementById('timerPreset2').value) || defaultSettings.timerPreset2;
             settings.timerPreset3 = parseInt(document.getElementById('timerPreset3').value) || defaultSettings.timerPreset3;
@@ -3771,6 +4187,10 @@
             // Update timer widget visibility and presets
             updateTimerWidgetVisibility();
             updateTimerPresets();
+            updateTimerPresetsVisibility();
+            
+            // Update todo widget visibility
+            updateTodoWidgetVisibility();
             
             if (settingsSaved) {
                 showSettingsMessage('Settings saved successfully!', 'info');
