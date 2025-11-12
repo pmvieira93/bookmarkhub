@@ -89,14 +89,138 @@
 
         .container {
             max-width: 100%;
-            width: 90vw;
+            width: 100vw;
             margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .bookmarks-container {
+            flex: 1;
             background: var(--bg-secondary);
             border-radius: 12px;
             box-shadow: 0 8px 32px var(--shadow);
             border: 1px solid var(--border-primary);
             overflow: hidden;
-            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        .bookmarks-container.full-width {
+            flex: 1;
+            max-width: 100%;
+        }
+
+        /* When widgets are collapsed, bookmarks take more space */
+        .widgets-container.collapsed ~ .bookmarks-container,
+        .container:has(.widgets-container.collapsed) .bookmarks-container {
+            flex: 1;
+        }
+
+        .widgets-container {
+            flex: 0 0 25%;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid var(--border-primary);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .widgets-container.collapsed {
+            flex: 0 0 40px;
+            padding: 10px 5px;
+            cursor: pointer;
+        }
+
+        .widgets-container.hidden {
+            display: none;
+        }
+
+        .widgets-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .widgets-header h3 {
+            color: var(--text-primary);
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .widgets-toggle-btn {
+            background: transparent;
+            border: none;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            font-size: 14px;
+            padding: 0;
+        }
+
+        .widgets-toggle-btn:hover {
+            color: var(--accent-primary);
+        }
+
+        .widgets-collapsed-label {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            user-select: none;
+        }
+
+        .widgets-collapsed-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .widgets-collapsed-icon {
+            color: var(--text-primary);
+            font-size: 14px;
+            transform: rotate(90deg);
+        }
+
+        .widgets-container.collapsed .widgets-collapsed-label {
+            display: flex;
+        }
+
+        .widgets-container:not(.collapsed) .widgets-collapsed-label {
+            display: none !important;
+        }
+
+        .widgets-container.collapsed .widgets-collapsed-label {
+            display: flex;
+        }
+
+        .widgets-container.collapsed .widgets-header,
+        .widgets-container.collapsed .clock-widget {
+            display: none;
+        }
+
+        .widgets-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .widgets-container.collapsed .widgets-content {
+            display: none;
         }
 
         .header {
@@ -661,7 +785,41 @@
             max-width: 500px;
             border: 1px solid var(--border-secondary);
             max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin-top: 8vh;
+        }
+
+        .modal-body {
             overflow-y: auto;
+            flex: 1;
+            padding-right: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* Custom scrollbar for modal */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--border-secondary);
+            border-radius: 3px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Firefox scrollbar */
+        .modal-body {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-secondary) transparent;
         }
 
         .modal h3 {
@@ -909,7 +1067,686 @@
             display: flex;
             gap: 12px;
             justify-content: flex-end;
-            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-secondary);
+            flex-shrink: 0;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-secondary);
+        }
+
+        .settings-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .settings-section-title {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        /* Widget Settings Tree */
+        .widget-settings-tree {
+            margin-top: 16px;
+            padding-left: 8px;
+        }
+
+        .widget-setting-item {
+            margin-bottom: 16px;
+            border-left: 2px solid var(--border-secondary);
+            padding-left: 12px;
+        }
+
+        .widget-setting-header {
+            margin-bottom: 8px;
+        }
+
+        .widget-setting-content {
+            margin-top: 12px;
+            padding-left: 8px;
+            display: none;
+        }
+
+        .widget-setting-content.active {
+            display: block;
+        }
+
+        .widget-setting-item .form-group {
+            margin-bottom: 12px;
+        }
+
+        /* Clock Widget Styling */
+        .clock-widget {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .clock-time {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        .clock-date {
+            font-size: 0.7em;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .clock-timezone {
+            font-size: 0.65em;
+            color: var(--text-secondary);
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        /* Multi-timezone clock styling - World Time Buddy style */
+        .clock-widget.multi-timezone {
+            width: 100%;
+            padding: 6px 12px;
+        }
+
+        .wtb-style-clock {
+            width: 100%;
+        }
+
+        .wtb-header {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            border-bottom: 2px solid var(--border-secondary);
+        }
+
+        .wtb-location-col {
+            width: 90px;
+            font-size: 0.55em;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-top: 2px;
+        }
+
+        .wtb-time-cols {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .wtb-time-header {
+            flex: 1;
+            text-align: center;
+            font-size: 0.5em;
+            color: var(--text-secondary);
+            font-weight: 500;
+            line-height: 1.1;
+            padding: 1px;
+        }
+
+        .wtb-time-header strong {
+            display: block;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1px;
+        }
+
+        .wtb-row {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 3px;
+            align-items: stretch;
+            border-radius: 4px;
+            padding: 0;
+        }
+
+        .wtb-location-info {
+            width: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0px;
+        }
+
+        .wtb-location {
+            font-size: 0.6em;
+            color: var(--text-primary);
+            font-weight: 700;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.1;
+        }
+
+        .wtb-location-date {
+            font-size: 0.5em;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-align: left;
+            line-height: 1.1;
+        }
+
+        .wtb-times {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .wtb-time-cell {
+            flex: 1;
+            text-align: center;
+            padding: 4px 2px;
+            border-radius: 4px;
+            font-size: 0.58em;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: var(--bg-quaternary);
+            font-family: 'Courier New', monospace;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1px;
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .wtb-time-cell .time-value {
+            font-size: 1.05em;
+        }
+
+        .wtb-time-cell .time-period {
+            font-size: 0.72em;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        .wtb-time-cell.current {
+            background: var(--accent-primary);
+            border: 2px solid var(--accent-secondary);
+            box-shadow: 0 0 8px var(--focus-ring);
+            color: white;
+            font-weight: 700;
+            padding-bottom: 8px;
+        }
+
+        .wtb-time-cell.current::after {
+            content: 'NOW';
+            position: absolute;
+            bottom: -3.5px;
+            font-size: 0.8em;
+            background: var(--accent-secondary);
+            color: white;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .wtb-time-cell.night {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+        }
+
+        .wtb-time-cell.night .time-period {
+            color: var(--info);
+        }
+
+        .wtb-time-cell.morning {
+            background: rgba(255, 193, 7, 0.15);
+        }
+
+        .wtb-time-cell.afternoon {
+            background: rgba(33, 150, 243, 0.15);
+        }
+
+        .wtb-date-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 3px;
+            padding-top: 3px;
+            border-top: 1px solid var(--border-secondary);
+        }
+
+        .wtb-date-label {
+            width: 75px;
+            font-size: 0.55em;
+            color: var(--text-secondary);
+        }
+
+        .wtb-dates {
+            display: flex;
+            gap: 3px;
+            flex: 1;
+        }
+
+        .wtb-date-cell {
+            flex: 1;
+            text-align: center;
+            font-size: 0.55em;
+            color: var(--text-secondary);
+        }
+
+        /* Timer Widget Styling */
+        .timer-widget {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .timer-widget h4 {
+            color: var(--text-primary);
+            font-size: 13px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* ToDo Widget Styling */
+        .todo-widget {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+            max-height: 25vh;
+        }
+
+        .todo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .todo-header h4 {
+            color: var(--text-primary);
+            font-size: 13px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .todo-counter {
+            flex: 1;
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 0 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .todo-pending {
+            color: var(--accent-primary);
+        }
+
+        .todo-total {
+            color: var(--text-secondary);
+        }
+
+        .todo-clear-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .todo-clear-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .todo-input-container {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .todo-input-container input {
+            flex: 1;
+            padding: 6px 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .todo-input-container input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px var(--focus-ring);
+        }
+
+        .todo-add-btn {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .todo-add-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .todo-list {
+            max-height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-right: 4px;
+        }
+
+        .todo-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .todo-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb {
+            background: var(--border-secondary);
+            border-radius: 3px;
+        }
+
+        .todo-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .todo-list {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-secondary) transparent;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .todo-item:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            order: 999;
+        }
+
+        .todo-checkbox {
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            border: 2px solid var(--border-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .todo-checkbox:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .todo-item.completed .todo-checkbox {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .todo-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .todo-item.completed .todo-checkbox::after {
+            display: block;
+        }
+
+        .todo-text {
+            flex: 1;
+            color: var(--text-primary);
+            font-size: 12px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .todo-remove-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            opacity: 0;
+        }
+
+        .todo-item:hover .todo-remove-btn {
+            opacity: 1;
+        }
+
+        .todo-remove-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .no-todos {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .timer-display {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            border: 1px solid var(--border-secondary);
+        }
+
+        .timer-presets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .timer-custom-input {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .timer-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .timer-input-group label {
+            font-size: 9px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .timer-input-group input {
+            padding: 4px 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 11px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .timer-input-group input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px var(--focus-ring);
+        }
+
+        .timer-set-custom-btn {
+            width: 100%;
+            padding: 6px;
+            background: var(--bg-quaternary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 6px;
+        }
+
+        .timer-set-custom-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .timer-preset-btn {
+            padding: 6px 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .timer-preset-btn:hover {
+            background: var(--bg-quaternary);
+            border-color: var(--accent-primary);
+        }
+
+        .timer-preset-btn.active {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .timer-control-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .timer-control-btn.start {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .timer-control-btn.start:hover {
+            background: var(--accent-hover);
+        }
+
+        .timer-control-btn.pause {
+            background: var(--warning);
+            color: white;
+        }
+
+        .timer-control-btn.pause:hover {
+            opacity: 0.9;
+        }
+
+        .timer-control-btn.reset {
+            background: var(--bg-quaternary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-secondary);
+        }
+
+        .timer-control-btn.reset:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .timer-control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Checkbox styling */
@@ -1110,6 +1947,28 @@
         @media (max-width: 768px) {
             .container {
                 width: 95vw;
+                flex-direction: column;
+            }
+
+            .bookmarks-container {
+                flex: 1;
+                max-width: 100%;
+            }
+
+            .widgets-container {
+                flex: 1;
+                max-width: 100%;
+            }
+
+            .widgets-container.collapsed {
+                flex: 0 0 60px;
+                padding: 10px;
+            }
+
+            .widgets-collapsed-label {
+                writing-mode: horizontal-tb !important;
+                text-orientation: upright;
+                letter-spacing: 4px;
             }
             
             .controls-row {
@@ -1130,19 +1989,20 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="header-content">
-                <h1>🔗 Bookmarks Manager</h1>
-                <p>Better organization for your daily work</p>
+        <div class="bookmarks-container" id="bookmarksContainer">
+            <div class="header">
+                <div class="header-content">
+                    <h1>🔗 Bookmarks Manager</h1>
+                    <p>Better organization for your daily work</p>
+                </div>
+                <div class="theme-switcher">
+                    <button class="theme-option" data-theme="light">Light</button>
+                    <button class="theme-option" data-theme="grey">Grey</button>
+                    <button class="theme-option" data-theme="dark">Dark</button>
+                </div>
             </div>
-            <div class="theme-switcher">
-                <button class="theme-option" data-theme="light">Light</button>
-                <button class="theme-option" data-theme="grey">Grey</button>
-                <button class="theme-option" data-theme="dark">Dark</button>
-            </div>
-        </div>
 
-        <div class="controls">
+            <div class="controls">
             <div class="controls-row">
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Search bookmarks, tags, categories...">
@@ -1187,15 +2047,92 @@
             </div>
         </div>
 
-        <div class="bookmarks-grid" id="bookmarksGrid">
-            <div class="no-bookmarks">
-                <h3>No bookmarks yet</h3>
-                <p>Click "Add" to create your first bookmark</p>
+            <div class="bookmarks-grid" id="bookmarksGrid">
+                <div class="no-bookmarks">
+                    <h3>No bookmarks yet</h3>
+                    <p>Click "Add" to create your first bookmark</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bookmark Modal -->
+        <div class="widgets-container hidden" id="widgetsContainer" onclick="toggleWidgetsExpanded(event)">
+            <div class="widgets-collapsed-label">
+                <span class="widgets-collapsed-text">WIDGETS</span>
+                <span class="widgets-collapsed-icon">▶</span>
+            </div>
+            
+            <div class="widgets-header">
+                <h3>Widgets</h3>
+                <div class="widgets-toggle-btn" onclick="toggleWidgetsCollapse(event)" title="Collapse widgets panel">▶</div>
+            </div>
+            
+            <div class="widgets-content">
+                <!-- Custom Clock Widget -->
+                <div class="clock-widget" id="clockWidget" style="display: none;">
+                    <div id="multiClockView" style="width: 100%;">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Focus Timer Widget -->
+                <div class="timer-widget" id="timerWidget">
+                    <h4>⏱️ Focus Timer</h4>
+                    <div class="timer-display" id="timerDisplay">00:00:00</div>
+                    
+                    <div class="timer-presets" id="timerPresets">
+                        <button class="timer-preset-btn" onclick="setTimer(3600)">1h</button>
+                        <button class="timer-preset-btn" onclick="setTimer(1800)">30min</button>
+                        <button class="timer-preset-btn" onclick="setTimer(30)">30s</button>
+                    </div>
+                    
+                    <div class="timer-custom-input">
+                        <div class="timer-input-group">
+                            <label>Hours</label>
+                            <input type="number" id="timerHours" min="0" max="23" value="0" />
+                        </div>
+                        <div class="timer-input-group">
+                            <label>Minutes</label>
+                            <input type="number" id="timerMinutes" min="0" max="59" value="0" />
+                        </div>
+                        <div class="timer-input-group">
+                            <label>Seconds</label>
+                            <input type="number" id="timerSeconds" min="0" max="59" value="0" />
+                        </div>
+                    </div>
+                    
+                    <button class="timer-set-custom-btn" onclick="setCustomTimer()">Set Custom Timer</button>
+                    
+                    <div class="timer-controls">
+                        <button class="timer-control-btn start" id="timerStartBtn" onclick="startTimer()">▶ Start</button>
+                        <button class="timer-control-btn pause" id="timerPauseBtn" onclick="pauseTimer()" disabled>⏸ Pause</button>
+                        <button class="timer-control-btn reset" id="timerResetBtn" onclick="resetTimer()">↻ Reset</button>
+                    </div>
+                </div>
+
+                <!-- ToDo Widget -->
+                <div class="todo-widget" id="todoWidget">
+                    <div class="todo-header">
+                        <h4>📝 ToDo List</h4>
+                        <div class="todo-counter" id="todoCounter">
+                            <span class="todo-pending">0</span> / <span class="todo-total">0</span>
+                        </div>
+                        <button class="todo-clear-btn" onclick="clearAllTodos()" title="Clear all tasks">🗑️</button>
+                    </div>
+                    
+                    <div class="todo-input-container">
+                        <input type="text" id="todoInput" placeholder="Add a new task..." onkeypress="if(event.key==='Enter') addTodo()">
+                        <button class="todo-add-btn" onclick="addTodo()">+</button>
+                    </div>
+                    
+                    <div class="todo-list" id="todoList">
+                        <div class="no-todos">
+                            <span>No tasks yet</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <!-- Bookmark Modal -->
     <div id="bookmarkModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle">Add New Bookmark</h3>
@@ -1257,29 +2194,142 @@
 
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 700px;">
             <h3>Settings</h3>
             
-            <div id="settingsMessage"></div>
-            
-            <div class="form-group">
-                <label for="categoriesList">Categories (comma separated)</label>
-                <textarea id="categoriesList" rows="3" placeholder="General, Support, Development, Personal, Apps, Documentation, Intranet, Tools"></textarea>
-                <small>Define your custom categories. Default will be used if empty.</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="environmentTagsList">Environment Tags (comma separated)</label>
-                <textarea id="environmentTagsList" rows="2" placeholder="prod, dev, test, staging"></textarea>
-                <small>Define environment tags that will appear prominently after "All Tags". Leave empty to disable.</small>
-            </div>
-            
-            <div class="form-group">
-                <label class="checkbox-container">
-                    <input type="checkbox" id="organizeByCategoryCheckbox">
-                    Organize bookmarks by category sections
-                </label>
-                <small>When enabled, bookmarks will be grouped into collapsible category sections</small>
+            <div class="modal-body">
+                <div id="settingsMessage"></div>
+                
+                <!-- Settings Sections -->
+                <div class="settings-section">
+                    <h4 class="settings-section-title">General Settings</h4>
+                    
+                    <div class="form-group">
+                        <label for="categoriesList">Categories (comma separated)</label>
+                        <textarea id="categoriesList" rows="3" placeholder="General, Support, Development, Personal, Apps, Documentation, Intranet, Tools"></textarea>
+                        <small>Define your custom categories. Default will be used if empty.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="environmentTagsList">Environment Tags (comma separated)</label>
+                        <textarea id="environmentTagsList" rows="2" placeholder="prod, dev, test, staging"></textarea>
+                        <small>Define environment tags that will appear prominently after "All Tags". Leave empty to disable.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="organizeByCategoryCheckbox">
+                            Organize bookmarks by category sections
+                        </label>
+                        <small>When enabled, bookmarks will be grouped into collapsible category sections</small>
+                    </div>
+                </div>
+                
+                <!-- Widgets Settings Section -->
+                <div class="settings-section">
+                    <h4 class="settings-section-title">Widget Panel</h4>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="enableWidgetPanelCheckbox" onchange="toggleWidgetPanelSettings()">
+                            <strong>Enable Widget Panel</strong>
+                        </label>
+                        <small>Show/hide the widgets sidebar panel</small>
+                    </div>
+                    
+                    <!-- Widget Settings Tree -->
+                    <div id="widgetSettingsTree" class="widget-settings-tree">
+                        
+                        <!-- Clock Widget Settings -->
+                        <div class="widget-setting-item">
+                            <div class="widget-setting-header">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="enableClockWidgetCheckbox" onchange="toggleClockWidgetSettings()">
+                                    <strong>Clock Widget</strong>
+                                </label>
+                            </div>
+                            <div id="clockWidgetSettings" class="widget-setting-content">
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="enableMultiTimezoneCheckbox">
+                                        Enable Multi-Timezone View
+                                    </label>
+                                    <small>Show multiple timezones in a grid layout</small>
+                                </div>
+                                
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label for="timezonesList">
+                                        Timezones (comma separated)
+                                        <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" title="View available timezone identifiers" style="margin-left: 8px; text-decoration: none; font-size: 0.9em;">ℹ️</a>
+                                    </label>
+                                    <textarea id="timezonesList" rows="3" placeholder="Europe/Lisbon|Lisbon,America/Los_Angeles|PST,Australia/Melbourne|Melbourne,Europe/Berlin|Germany"></textarea>
+                                    <small>Format: TimeZone|Label (comma separated). Examples: America/New_York|EST, Europe/London|London, Asia/Tokyo|Tokyo. Maximum 5 timezones.</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timer Widget Settings -->
+                        <div class="widget-setting-item">
+                            <div class="widget-setting-header">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="enableTimerWidgetCheckbox" onchange="toggleTimerWidgetSettings()">
+                                    <strong>Focus Timer Widget</strong>
+                                </label>
+                            </div>
+                            <div id="timerWidgetSettings" class="widget-setting-content">
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="timerShowPresetsCheckbox">
+                                        Show preset buttons
+                                    </label>
+                                    <small>Display quick preset timer buttons in the widget</small>
+                                </div>
+                                
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label for="timerPreset1">Preset 1 (minutes)</label>
+                                    <input type="number" id="timerPreset1" min="1" max="240" placeholder="60" style="width: 100px;">
+                                </div>
+                                
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label for="timerPreset2">Preset 2 (minutes)</label>
+                                    <input type="number" id="timerPreset2" min="1" max="240" placeholder="30" style="width: 100px;">
+                                </div>
+                                
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label for="timerPreset3">Preset 3 (seconds)</label>
+                                    <input type="number" id="timerPreset3" min="1" max="3600" placeholder="30" style="width: 100px;">
+                                </div>
+                                
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="timerSoundCheckbox">
+                                        Enable sound alerts
+                                    </label>
+                                    <small>Play beep sounds when timer completes</small>
+                                </div>
+                                
+                                <div class="form-group" style="margin-left: 24px;">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="timerNotificationCheckbox">
+                                        Enable browser notifications
+                                    </label>
+                                    <small>Show desktop notification when timer completes</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- ToDo Widget Settings -->
+                        <div class="widget-setting-item">
+                            <div class="widget-setting-header">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="enableTodoWidgetCheckbox">
+                                    <strong>ToDo List Widget</strong>
+                                </label>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
             </div>
             
             <div class="form-actions">
@@ -1294,7 +2344,21 @@
         const defaultSettings = {
             categories: "General,Support,Development,Personal,Apps,Documentation,Intranet,Tools",
             environmentTags: "",
-            organizeByCategory: false
+            organizeByCategory: false,
+            enableMultiTimezone: false,
+            timezones: "",
+            // Widget panel settings
+            enableWidgetPanel: false,
+            enableClockWidget: false,
+            enableTimerWidget: false,
+            enableTodoWidget: false,
+            // Timer widget settings
+            timerPreset1: 60,  // minutes
+            timerPreset2: 30,  // minutes
+            timerPreset3: 30,  // seconds
+            timerSound: false,
+            timerNotification: false,
+            timerShowPresets: false
         };
 
         // Theme management
@@ -1394,15 +2458,646 @@
         // Common tags for suggestions
         const commonTags = ['prod', 'dev', 'int', 'test', 'staging', 'api', 'frontend', 'backend', 'database', 'admin', 'monitoring', 'docs', 'ci/cd', 'mobile', 'web'];
 
+        // Timer Widget Functions
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let timerRunning = false;
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('timerDisplay').textContent = formatTime(timerSeconds);
+        }
+
+        function setTimer(seconds) {
+            // Remove active class from all preset buttons
+            document.querySelectorAll('.timer-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Set timer and update display
+            timerSeconds = seconds;
+            updateTimerDisplay();
+            
+            // Update custom input fields to reflect the preset
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            document.getElementById('timerHours').value = hours;
+            document.getElementById('timerMinutes').value = minutes;
+            document.getElementById('timerSeconds').value = secs;
+            
+            // Reset if timer was running
+            if (timerRunning) {
+                pauseTimer();
+            }
+        }
+
+        function setCustomTimer() {
+            const hours = parseInt(document.getElementById('timerHours').value) || 0;
+            const minutes = parseInt(document.getElementById('timerMinutes').value) || 0;
+            const seconds = parseInt(document.getElementById('timerSeconds').value) || 0;
+            
+            const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+            
+            if (totalSeconds <= 0) {
+                alert('Please enter a valid time!');
+                return;
+            }
+            
+            // Remove active class from preset buttons
+            document.querySelectorAll('.timer-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Set timer and update display
+            timerSeconds = totalSeconds;
+            updateTimerDisplay();
+            
+            // Reset if timer was running
+            if (timerRunning) {
+                pauseTimer();
+            }
+        }
+
+        function playTimerAlert() {
+            // Check if sound is enabled in settings
+            if (settings.timerSound === false) {
+                return;
+            }
+            
+            // Create an audio context for the beep sound
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800; // Frequency in Hz
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+                
+                // Play three beeps
+                setTimeout(() => {
+                    const osc2 = audioContext.createOscillator();
+                    const gain2 = audioContext.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioContext.destination);
+                    osc2.frequency.value = 800;
+                    osc2.type = 'sine';
+                    gain2.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    osc2.start(audioContext.currentTime);
+                    osc2.stop(audioContext.currentTime + 0.5);
+                }, 200);
+                
+                setTimeout(() => {
+                    const osc3 = audioContext.createOscillator();
+                    const gain3 = audioContext.createGain();
+                    osc3.connect(gain3);
+                    gain3.connect(audioContext.destination);
+                    osc3.frequency.value = 800;
+                    osc3.type = 'sine';
+                    gain3.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gain3.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                    osc3.start(audioContext.currentTime);
+                    osc3.stop(audioContext.currentTime + 0.5);
+                }, 400);
+            } catch (e) {
+                console.log('Audio context not supported');
+            }
+        }
+
+        function showTimerNotification() {
+            // Check if notifications are enabled in settings
+            if (settings.timerNotification === false) {
+                // Just show a simple alert if notifications are disabled
+                alert('⏰ Timer Complete!');
+                return;
+            }
+            
+            // Try to show browser notification if permitted
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('⏰ Focus Timer Complete!', {
+                    body: 'Great job! Time for a break or start a new session.',
+                    icon: '⏰',
+                    requireInteraction: true
+                });
+            } else if ('Notification' in window && Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        new Notification('⏰ Focus Timer Complete!', {
+                            body: 'Great job! Time for a break or start a new session.',
+                            icon: '⏰',
+                            requireInteraction: true
+                        });
+                    }
+                });
+            }
+            
+            // Always show alert as fallback
+            alert('⏰ Timer Complete!\n\nGreat work! Time to take a break or start a new focus session. 🎯');
+        }
+
+        function startTimer() {
+            if (timerSeconds <= 0) {
+                alert('Please select a timer duration first!');
+                return;
+            }
+            
+            if (!timerRunning) {
+                timerRunning = true;
+                document.getElementById('timerStartBtn').disabled = true;
+                document.getElementById('timerPauseBtn').disabled = false;
+                
+                timerInterval = setInterval(() => {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                    
+                    if (timerSeconds <= 0) {
+                        pauseTimer();
+                        
+                        // Play sound alert
+                        playTimerAlert();
+                        
+                        // Show notification
+                        showTimerNotification();
+                        
+                        // Clear preset buttons
+                        document.querySelectorAll('.timer-preset-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        
+                        // Reset input fields
+                        document.getElementById('timerHours').value = 0;
+                        document.getElementById('timerMinutes').value = 0;
+                        document.getElementById('timerSeconds').value = 0;
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            if (timerRunning) {
+                timerRunning = false;
+                clearInterval(timerInterval);
+                document.getElementById('timerStartBtn').disabled = false;
+                document.getElementById('timerPauseBtn').disabled = true;
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 0;
+            updateTimerDisplay();
+            document.querySelectorAll('.timer-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+        }
+
+        // ToDo Widget Functions
+        let todos = [];
+        let todoIdCounter = 0;
+
+        function loadTodos() {
+            const savedTodos = localStorage.getItem('bookmarks-todos');
+            if (savedTodos) {
+                todos = JSON.parse(savedTodos);
+                todoIdCounter = Math.max(...todos.map(t => t.id), 0) + 1;
+                renderTodos();
+            }
+        }
+
+        function saveTodos() {
+            localStorage.setItem('bookmarks-todos', JSON.stringify(todos));
+        }
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            
+            if (text === '') {
+                return;
+            }
+            
+            const todo = {
+                id: todoIdCounter++,
+                text: text,
+                completed: false,
+                createdAt: Date.now()
+            };
+            
+            todos.push(todo);
+            saveTodos();
+            renderTodos();
+            
+            input.value = '';
+            input.focus();
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        function removeTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveTodos();
+            renderTodos();
+        }
+
+        function clearAllTodos() {
+            if (todos.length === 0) {
+                return;
+            }
+            
+            if (confirm('Are you sure you want to clear all tasks?')) {
+                todos = [];
+                saveTodos();
+                renderTodos();
+            }
+        }
+
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            
+            // Update counter
+            updateTodoCounter();
+            
+            if (todos.length === 0) {
+                todoList.innerHTML = '<div class="no-todos"><span>No tasks yet</span></div>';
+                return;
+            }
+            
+            // Sort: incomplete tasks first, then completed tasks
+            const sortedTodos = [...todos].sort((a, b) => {
+                if (a.completed === b.completed) {
+                    return a.createdAt - b.createdAt;
+                }
+                return a.completed ? 1 : -1;
+            });
+            
+            todoList.innerHTML = sortedTodos.map(todo => `
+                <div class="todo-item ${todo.completed ? 'completed' : ''}" data-id="${todo.id}">
+                    <div class="todo-checkbox" onclick="toggleTodo(${todo.id})"></div>
+                    <div class="todo-text">${escapeHtml(todo.text)}</div>
+                    <button class="todo-remove-btn" onclick="removeTodo(${todo.id})" title="Remove task">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function updateTodoCounter() {
+            const total = todos.length;
+            const completed = todos.filter(t => t.completed).length;
+            const pending = total - completed;
+            
+            const counterElement = document.getElementById('todoCounter');
+            if (counterElement) {
+                counterElement.innerHTML = `<span class="todo-pending">${pending}</span> / <span class="todo-total">${total}</span>`;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Clock Widget Functions
+        function updateClock() {
+            if (!settings.enableMultiTimezone) {
+                return; // Don't update if clock is disabled
+            }
+            updateMultiTimezoneClock();
+        }
+
+        function updateMultiTimezoneClock() {
+            const now = new Date();
+            const timezones = parseTimezones();
+            const multiClockView = document.getElementById('multiClockView');
+            
+            // Build improved World Time Buddy style layout
+            let html = '<div class="wtb-style-clock">';
+            
+            // Header row - simple column headers
+            html += '<div class="wtb-header">';
+            html += '<div class="wtb-location-col">TIMEZONE</div>';
+            html += '<div class="wtb-time-cols">';
+            html += '<div class="wtb-time-header">-1h</div>';
+            html += '<div class="wtb-time-header"><strong>NOW</strong></div>';
+            html += '<div class="wtb-time-header">+1h</div>';
+            html += '<div class="wtb-time-header">+2h</div>';
+            html += '</div></div>';
+            
+            // Timezone rows - each shows its own context
+            timezones.forEach(tz => {
+                html += '<div class="wtb-row">';
+                
+                // Get current date for this timezone - use the now object directly with timezone option
+                const tzDateStr = now.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    timeZone: tz.zone 
+                });
+                
+                html += '<div class="wtb-location-info">';
+                html += `<div class="wtb-location" title="${tz.zone}">${tz.label}</div>`;
+                html += `<div class="wtb-location-date">${tzDateStr}</div>`;
+                html += '</div>';
+                
+                html += '<div class="wtb-times">';
+                
+                // Generate time slots: -1h, now, +1h, +2h
+                for (let offset = -1; offset <= 2; offset++) {
+                    const slotTime = new Date(now.getTime() + offset * 60 * 60 * 1000);
+                    
+                    // Get hour, minute, second directly using toLocaleString with timezone
+                    const timeString = slotTime.toLocaleString('en-US', { 
+                        timeZone: tz.zone,
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    });
+                    
+                    const [hourStr, minuteStr, secondStr] = timeString.split(':');
+                    const hour = parseInt(hourStr, 10);
+                    const minutes = minuteStr;
+                    const seconds = secondStr;
+                    
+                    // Determine time period
+                    const isNight = hour >= 22 || hour < 6;
+                    const isMorning = hour >= 6 && hour < 12;
+                    const isAfternoon = hour >= 12 && hour < 18;
+                    const isCurrent = offset === 0;
+                    
+                    // Build class list
+                    let cellClass = 'wtb-time-cell';
+                    if (isCurrent) cellClass += ' current';
+                    if (isNight) cellClass += ' night';
+                    else if (isMorning) cellClass += ' morning';
+                    else if (isAfternoon) cellClass += ' afternoon';
+                    
+                    // Format time
+                    const displayHour = hour % 12 || 12;
+                    const period = hour >= 12 ? 'PM' : 'AM';
+                    
+                    // Build cell content
+                    if (isCurrent) {
+                        // Show seconds for current time
+                        html += `<div class="${cellClass}">
+                            <div class="time-value">${displayHour}:${minutes}:${seconds}</div>
+                            <div class="time-period">${period}</div>
+                        </div>`;
+                    } else {
+                        html += `<div class="${cellClass}">
+                            <div class="time-value">${displayHour}:${minutes}</div>
+                            <div class="time-period">${period}</div>
+                        </div>`;
+                    }
+                }
+                
+                html += '</div></div>';
+            });
+            
+            html += '</div>';
+            
+            multiClockView.innerHTML = html;
+        }
+
+        function parseTimezones() {
+            // If timezones setting is empty or just whitespace, use UTC as default
+            if (!settings.timezones || settings.timezones.trim() === '') {
+                return [{ zone: 'UTC', label: 'UTC' }];
+            }
+            
+            // Parse user-provided timezones, limit to max 5
+            const userTimezones = settings.timezones.split(',')
+                .map(tz => {
+                    const parts = tz.trim().split('|');
+                    const zone = parts[0] ? parts[0].trim() : '';
+                    const label = parts[1] ? parts[1].trim() : zone;
+                    return { zone, label };
+                })
+                .filter(tz => tz.zone) // Filter out any empty entries
+                .slice(0, 5); // Limit to max 5 timezones
+            
+            // If no valid timezones parsed, return UTC
+            if (userTimezones.length === 0) {
+                return [{ zone: 'UTC', label: 'UTC' }];
+            }
+            
+            return userTimezones;
+        }
+
+        function toggleClockView() {
+            const clockWidget = document.getElementById('clockWidget');
+            
+            if (settings.enableMultiTimezone) {
+                clockWidget.style.display = 'flex';
+                clockWidget.classList.add('multi-timezone');
+            } else {
+                clockWidget.style.display = 'none';
+                clockWidget.classList.remove('multi-timezone');
+            }
+            
+            // Update layout based on widgets
+            updateLayoutBasedOnWidgets();
+        }
+
+        function updateLayoutBasedOnWidgets() {
+            const bookmarksContainer = document.getElementById('bookmarksContainer');
+            const widgetsContainer = document.getElementById('widgetsContainer');
+            
+            // Check if widget panel is enabled and if any widgets are enabled
+            const widgetPanelEnabled = settings.enableWidgetPanel !== false;
+            const hasEnabledWidgets = settings.enableClockWidget !== false || settings.enableTimerWidget !== false;
+            const hasWidgets = widgetPanelEnabled && hasEnabledWidgets;
+            
+            if (hasWidgets) {
+                // Show widgets container and adjust layout
+                widgetsContainer.classList.remove('hidden');
+                bookmarksContainer.classList.remove('full-width');
+                
+                // Load collapse state from localStorage
+                const isCollapsed = localStorage.getItem('widgets-collapsed') === 'true';
+                if (isCollapsed) {
+                    widgetsContainer.classList.add('collapsed');
+                    const toggleBtn = widgetsContainer.querySelector('.widgets-toggle-btn');
+                    if (toggleBtn) {
+                        toggleBtn.textContent = '◀';
+                        toggleBtn.title = 'Expand widgets panel';
+                    }
+                }
+            } else {
+                // Hide widgets container and make bookmarks full width
+                widgetsContainer.classList.add('hidden');
+                bookmarksContainer.classList.add('full-width');
+            }
+        }
+
+        function toggleWidgetsCollapse(event) {
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            const widgetsContainer = document.getElementById('widgetsContainer');
+            const toggleBtn = event.target;
+            
+            if (widgetsContainer.classList.contains('collapsed')) {
+                // Expand
+                widgetsContainer.classList.remove('collapsed');
+                toggleBtn.textContent = '▶';
+                toggleBtn.title = 'Collapse widgets panel';
+                localStorage.setItem('widgets-collapsed', 'false');
+            } else {
+                // Collapse
+                widgetsContainer.classList.add('collapsed');
+                toggleBtn.textContent = '◀';
+                toggleBtn.title = 'Expand widgets panel';
+                localStorage.setItem('widgets-collapsed', 'true');
+            }
+        }
+
+        function toggleWidgetsExpanded(event) {
+            const widgetsContainer = document.getElementById('widgetsContainer');
+            
+            // Only expand if collapsed and clicking on the container itself (not children)
+            if (widgetsContainer.classList.contains('collapsed')) {
+                widgetsContainer.classList.remove('collapsed');
+                const toggleBtn = widgetsContainer.querySelector('.widgets-toggle-btn');
+                if (toggleBtn) {
+                    toggleBtn.textContent = '▶';
+                    toggleBtn.title = 'Collapse widgets panel';
+                }
+                localStorage.setItem('widgets-collapsed', 'false');
+            }
+        }
+
+        function updateClockWidgetVisibility() {
+            const clockWidget = document.getElementById('clockWidget');
+            if (clockWidget) {
+                if (settings.enableClockWidget !== false) {
+                    clockWidget.style.display = 'flex';
+                } else {
+                    clockWidget.style.display = 'none';
+                }
+            }
+        }
+
+        function updateTimerWidgetVisibility() {
+            const timerWidget = document.getElementById('timerWidget');
+            if (timerWidget) {
+                if (settings.enableTimerWidget !== false) {
+                    timerWidget.style.display = 'flex';
+                } else {
+                    timerWidget.style.display = 'none';
+                }
+            }
+        }
+
+        function updateTodoWidgetVisibility() {
+            const todoWidget = document.getElementById('todoWidget');
+            if (todoWidget) {
+                if (settings.enableTodoWidget !== false) {
+                    todoWidget.style.display = 'flex';
+                } else {
+                    todoWidget.style.display = 'none';
+                }
+            }
+        }
+
+        function updateTimerPresets() {
+            // Update preset button labels and values
+            const preset1 = settings.timerPreset1 || 60;
+            const preset2 = settings.timerPreset2 || 30;
+            const preset3 = settings.timerPreset3 || 30;
+            
+            const btn1 = document.querySelector('[onclick="setTimer(3600)"]');
+            const btn2 = document.querySelector('[onclick="setTimer(1800)"]');
+            const btn3 = document.querySelector('[onclick="setTimer(30)"]');
+            
+            if (btn1) {
+                btn1.textContent = preset1 >= 60 ? `${preset1}min` : `${preset1}m`;
+                btn1.setAttribute('onclick', `setTimer(${preset1 * 60})`);
+            }
+            
+            if (btn2) {
+                btn2.textContent = preset2 >= 60 ? `${preset2}min` : `${preset2}m`;
+                btn2.setAttribute('onclick', `setTimer(${preset2 * 60})`);
+            }
+            
+            if (btn3) {
+                btn3.textContent = preset3 >= 60 ? `${Math.floor(preset3/60)}min` : `${preset3}s`;
+                btn3.setAttribute('onclick', `setTimer(${preset3})`);
+            }
+        }
+
+        function updateTimerPresetsVisibility() {
+            const presetsContainer = document.getElementById('timerPresets');
+            if (presetsContainer) {
+                if (settings.timerShowPresets !== false) {
+                    presetsContainer.style.display = 'grid';
+                } else {
+                    presetsContainer.style.display = 'none';
+                }
+            }
+        }
+
+        function initClock() {
+            toggleClockView();
+            if (settings.enableMultiTimezone) {
+                updateClock(); // Initial call
+                window.clockInterval = setInterval(updateClock, 1000); // Update every second
+            }
+            
+            // Initialize widget visibility based on settings
+            updateClockWidgetVisibility();
+            updateTimerWidgetVisibility();
+            updateTimerPresets();
+            updateTimerPresetsVisibility();
+            updateTodoWidgetVisibility();
+            
+            // Initialize layout
+            updateLayoutBasedOnWidgets();
+        }
+
         // Initialize the app
         function init() {
             // Initialize theme first
             initializeTheme();
             setupThemeSwitcher();
             
+            // Load settings BEFORE initializing clock
             loadSettings();
             loadBookmarks();
             loadExportTracking(); // Load export tracking data
+            
+            // Initialize clock AFTER settings are loaded
+            initClock();
+            
+            // Initialize ToDo widget
+            loadTodos();
+            
             renderBookmarks();
             updateCategoryFilter();
             updateTagFilter();
@@ -2356,11 +4051,73 @@
             document.getElementById('categoriesList').value = settings.categories || defaultSettings.categories;
             document.getElementById('environmentTagsList').value = settings.environmentTags || defaultSettings.environmentTags;
             document.getElementById('organizeByCategoryCheckbox').checked = settings.organizeByCategory || defaultSettings.organizeByCategory;
+            
+            // Widget panel settings
+            document.getElementById('enableWidgetPanelCheckbox').checked = settings.enableWidgetPanel !== false;
+            document.getElementById('enableClockWidgetCheckbox').checked = settings.enableClockWidget !== false;
+            document.getElementById('enableTimerWidgetCheckbox').checked = settings.enableTimerWidget !== false;
+            document.getElementById('enableTodoWidgetCheckbox').checked = settings.enableTodoWidget !== false;
+            
+            // Clock widget settings
+            document.getElementById('enableMultiTimezoneCheckbox').checked = settings.enableMultiTimezone || defaultSettings.enableMultiTimezone;
+            document.getElementById('timezonesList').value = settings.timezones || defaultSettings.timezones;
+            
+            // Timer widget settings
+            document.getElementById('timerShowPresetsCheckbox').checked = settings.timerShowPresets !== false;
+            document.getElementById('timerPreset1').value = settings.timerPreset1 || defaultSettings.timerPreset1;
+            document.getElementById('timerPreset2').value = settings.timerPreset2 || defaultSettings.timerPreset2;
+            document.getElementById('timerPreset3').value = settings.timerPreset3 || defaultSettings.timerPreset3;
+            document.getElementById('timerSoundCheckbox').checked = settings.timerSound !== false;
+            document.getElementById('timerNotificationCheckbox').checked = settings.timerNotification !== false;
+            
+            // Show/hide widget settings based on enabled state
+            toggleWidgetPanelSettings();
+            toggleClockWidgetSettings();
+            toggleTimerWidgetSettings();
+            
             document.getElementById('settingsModal').style.display = 'block';
         }
 
         function closeSettingsModal() {
             document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function toggleWidgetPanelSettings() {
+            const enabled = document.getElementById('enableWidgetPanelCheckbox').checked;
+            const tree = document.getElementById('widgetSettingsTree');
+            tree.style.opacity = enabled ? '1' : '0.5';
+            tree.style.pointerEvents = enabled ? 'auto' : 'none';
+            
+            // Auto-expand/collapse when toggling
+            if (enabled) {
+                tree.style.display = 'block';
+            } else {
+                tree.style.display = 'block'; // Keep visible but disabled
+            }
+        }
+
+        function toggleClockWidgetSettings() {
+            const enabled = document.getElementById('enableClockWidgetCheckbox').checked;
+            const content = document.getElementById('clockWidgetSettings');
+            
+            // Auto-expand when enabled, collapse when disabled
+            if (enabled) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
+        }
+
+        function toggleTimerWidgetSettings() {
+            const enabled = document.getElementById('enableTimerWidgetCheckbox').checked;
+            const content = document.getElementById('timerWidgetSettings');
+            
+            // Auto-expand when enabled, collapse when disabled
+            if (enabled) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
         }
 
         function saveSettings() {
@@ -2369,20 +4126,85 @@
             settings.environmentTags = document.getElementById('environmentTagsList').value.trim() || defaultSettings.environmentTags;
             settings.organizeByCategory = document.getElementById('organizeByCategoryCheckbox').checked;
             
+            // Widget panel settings
+            settings.enableWidgetPanel = document.getElementById('enableWidgetPanelCheckbox').checked;
+            settings.enableClockWidget = document.getElementById('enableClockWidgetCheckbox').checked;
+            settings.enableTimerWidget = document.getElementById('enableTimerWidgetCheckbox').checked;
+            settings.enableTodoWidget = document.getElementById('enableTodoWidgetCheckbox').checked;
+            
+            // Clock widget settings
+            settings.enableMultiTimezone = document.getElementById('enableMultiTimezoneCheckbox').checked;
+            
+            // Handle timezone setting - keep user input as is, but trim whitespace
+            const timezonesInput = document.getElementById('timezonesList').value.trim();
+            settings.timezones = timezonesInput;
+            
+            // Validate max 5 timezones
+            if (timezonesInput) {
+                const timezoneCount = timezonesInput.split(',').filter(tz => tz.trim()).length;
+                if (timezoneCount > 5) {
+                    showSettingsMessage('Maximum 5 timezones allowed. Only the first 5 will be used.', 'warning');
+                }
+            }
+            
+            // Timer widget settings
+            settings.timerShowPresets = document.getElementById('timerShowPresetsCheckbox').checked;
+            settings.timerPreset1 = parseInt(document.getElementById('timerPreset1').value) || defaultSettings.timerPreset1;
+            settings.timerPreset2 = parseInt(document.getElementById('timerPreset2').value) || defaultSettings.timerPreset2;
+            settings.timerPreset3 = parseInt(document.getElementById('timerPreset3').value) || defaultSettings.timerPreset3;
+            settings.timerSound = document.getElementById('timerSoundCheckbox').checked;
+            settings.timerNotification = document.getElementById('timerNotificationCheckbox').checked;
+            
             // Save settings
             const settingsSaved = saveSettingsToStorage();
-            if (settingsSaved) {
-                showSettingsMessage('Settings saved successfully!', 'info');
-            } else {
-                showSettingsMessage('Settings saved but there was an issue with local storage.', 'warning');
-            }
             
             // Update UI elements that depend on settings
             populateCategorySelect();
             updateCategoryFilter();
             updateTagFilter();
             renderBookmarks(); // Re-render to apply organization mode
-            closeSettingsModal();
+            
+            // Update widget panel visibility
+            updateLayoutBasedOnWidgets();
+            
+            // Update clock widget visibility
+            updateClockWidgetVisibility();
+            
+            // Update clock view - need to reinitialize if enabling for first time
+            toggleClockView();
+            if (settings.enableMultiTimezone) {
+                updateClock();
+                // Restart the interval if it wasn't running
+                clearInterval(window.clockInterval);
+                window.clockInterval = setInterval(updateClock, 1000);
+            } else {
+                // Stop the interval if disabling
+                if (window.clockInterval) {
+                    clearInterval(window.clockInterval);
+                }
+            }
+            
+            // Update timer widget visibility and presets
+            updateTimerWidgetVisibility();
+            updateTimerPresets();
+            updateTimerPresetsVisibility();
+            
+            // Update todo widget visibility
+            updateTodoWidgetVisibility();
+            
+            if (settingsSaved) {
+                showSettingsMessage('Settings saved successfully!', 'info');
+                // Close modal after brief delay to show success message
+                setTimeout(() => {
+                    closeSettingsModal();
+                }, 800);
+            } else {
+                showSettingsMessage('Settings saved but there was an issue with local storage.', 'warning');
+                // Still close modal but with longer delay for warning
+                setTimeout(() => {
+                    closeSettingsModal();
+                }, 1500);
+            }
         }
 
 
@@ -2405,6 +4227,28 @@
 
             let yamlContent = `# Personal Bookmarks\n# Generated on ${new Date().toISOString()}\n\n`;
             
+            // Export settings section
+            yamlContent += `# Settings Configuration\n`;
+            yamlContent += `Settings:\n`;
+            yamlContent += `  categories: "${settings.categories}"\n`;
+            yamlContent += `  environmentTags: "${settings.environmentTags}"\n`;
+            yamlContent += `  organizeByCategory: ${settings.organizeByCategory}\n`;
+            yamlContent += `  enableWidgetPanel: ${settings.enableWidgetPanel !== false}\n`;
+            yamlContent += `  enableClockWidget: ${settings.enableClockWidget !== false}\n`;
+            yamlContent += `  enableTimerWidget: ${settings.enableTimerWidget !== false}\n`;
+            yamlContent += `  enableTodoWidget: ${settings.enableTodoWidget !== false}\n`;
+            yamlContent += `  enableMultiTimezone: ${settings.enableMultiTimezone || false}\n`;
+            yamlContent += `  timezones: "${settings.timezones || ''}"\n`;
+            yamlContent += `  timerPreset1: ${settings.timerPreset1 || defaultSettings.timerPreset1}\n`;
+            yamlContent += `  timerPreset2: ${settings.timerPreset2 || defaultSettings.timerPreset2}\n`;
+            yamlContent += `  timerPreset3: ${settings.timerPreset3 || defaultSettings.timerPreset3}\n`;
+            yamlContent += `  timerShowPresets: ${settings.timerShowPresets !== false}\n`;
+            yamlContent += `  timerSound: ${settings.timerSound !== false}\n`;
+            yamlContent += `  timerNotification: ${settings.timerNotification !== false}\n`;
+            yamlContent += `\n`;
+            
+            // Export bookmarks section
+            yamlContent += `# Bookmarks\n`;
             Object.keys(categories).forEach(category => {
                 yamlContent += `${category}:\n`;
                 categories[category].forEach(bookmark => {
@@ -2449,17 +4293,52 @@
                         const yamlData = parseYAMLBookmarks(yamlText);
                         const importedBookmarks = yamlData.bookmarks;
                         const importedCategories = yamlData.categories;
+                        const importedSettings = yamlData.settings;
                         
                         if (importedBookmarks.length === 0) {
                             alert('No valid bookmarks found in the YAML file.');
                             return;
                         }
                         
-                        if (confirm(`Import ${importedBookmarks.length} bookmarks? This will merge with existing bookmarks and update categories.`)) {
-                            // Update categories setting with imported categories
-                            if (importedCategories.length > 0) {
-                                settings.categories = importedCategories.join(',');
+                        const hasSettings = importedSettings && Object.keys(importedSettings).length > 0;
+                        const settingsMsg = hasSettings ? ' and settings' : '';
+                        
+                        if (confirm(`Import ${importedBookmarks.length} bookmarks${settingsMsg}? This will merge with existing bookmarks${hasSettings ? ' and completely replace your current settings' : ''}.`)) {
+                            // Import settings if available - OVERRIDE existing settings
+                            if (hasSettings) {
+                                // Reset settings to defaults first, then apply imported settings
+                                settings = {...defaultSettings};
+                                Object.keys(importedSettings).forEach(key => {
+                                    settings[key] = importedSettings[key];
+                                });
                                 saveSettingsToStorage();
+                                
+                                // Apply settings changes
+                                populateCategorySelect();
+                                updateLayoutBasedOnWidgets();
+                                updateClockWidgetVisibility();
+                                toggleClockView();
+                                
+                                if (settings.enableMultiTimezone) {
+                                    updateClock();
+                                    clearInterval(window.clockInterval);
+                                    window.clockInterval = setInterval(updateClock, 1000);
+                                } else {
+                                    if (window.clockInterval) {
+                                        clearInterval(window.clockInterval);
+                                    }
+                                }
+                                
+                                updateTimerWidgetVisibility();
+                                updateTimerPresets();
+                                updateTimerPresetsVisibility();
+                                updateTodoWidgetVisibility();
+                            } else {
+                                // Update categories setting with imported categories (legacy support)
+                                if (importedCategories.length > 0) {
+                                    settings.categories = importedCategories.join(',');
+                                    saveSettingsToStorage();
+                                }
                             }
                             
                             const existingUrls = new Set(bookmarks.map(b => b.url));
@@ -2475,7 +4354,8 @@
                             // Don't count imports as changes - reset counter after import
                             resetChangesCount();
                             
-                            alert(`Successfully imported ${newBookmarks.length} new bookmarks! Categories updated: ${importedCategories.join(', ')}`);
+                            const settingsImportMsg = hasSettings ? ' Settings have been applied!' : '';
+                            alert(`Successfully imported ${newBookmarks.length} new bookmarks!${settingsImportMsg}`);
                         }
                     } catch (error) {
                         alert('Error parsing YAML file: ' + error.message);
@@ -2491,19 +4371,61 @@
         function parseYAMLBookmarks(yamlText) {
             const bookmarks = [];
             const categories = new Set();
+            const settings = {};
             const lines = yamlText.split('\n');
             let currentCategory = '';
+            let inSettingsSection = false;
             
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 
-                if (line.match(/^[A-Za-z][^:]*:$/) && !line.startsWith(' ') && !line.startsWith('\t')) {
-                    currentCategory = line.replace(':', '').trim();
-                    categories.add(currentCategory);
+                // Check for Settings section
+                if (line.trim() === 'Settings:') {
+                    inSettingsSection = true;
+                    currentCategory = '';
                     continue;
                 }
                 
-                if (line.match(/^  - /)) {
+                // Parse settings
+                if (inSettingsSection && line.match(/^  [a-zA-Z]/)) {
+                    const settingLine = line.trim();
+                    const colonIndex = settingLine.indexOf(':');
+                    if (colonIndex > 0) {
+                        const key = settingLine.substring(0, colonIndex).trim();
+                        let value = settingLine.substring(colonIndex + 1).trim();
+                        
+                        // Remove quotes if present
+                        value = value.replace(/^"|"$/g, '');
+                        
+                        // Parse boolean values
+                        if (value === 'true') {
+                            settings[key] = true;
+                        } else if (value === 'false') {
+                            settings[key] = false;
+                        } else if (!isNaN(value) && value !== '') {
+                            // Parse numeric values
+                            settings[key] = Number(value);
+                        } else {
+                            // String value
+                            settings[key] = value;
+                        }
+                    }
+                    continue;
+                }
+                
+                // Regular category/bookmark parsing
+                if (line.match(/^[A-Za-z][^:]*:$/) && !line.startsWith(' ') && !line.startsWith('\t')) {
+                    const categoryName = line.replace(':', '').trim();
+                    // Skip Settings category but process others
+                    if (categoryName !== 'Settings') {
+                        currentCategory = categoryName;
+                        categories.add(currentCategory);
+                        inSettingsSection = false;
+                    }
+                    continue;
+                }
+                
+                if (line.match(/^  - /) && currentCategory && !inSettingsSection) {
                     const bookmarkLine = line.replace(/^  - /, '');
                     
                     if (bookmarkLine.includes(': ') && !bookmarkLine.endsWith(':')) {
@@ -2564,7 +4486,8 @@
             
             return {
                 bookmarks: filteredBookmarks,
-                categories: Array.from(categories)
+                categories: Array.from(categories).filter(cat => cat !== 'Settings'),
+                settings: settings
             };
         }
 

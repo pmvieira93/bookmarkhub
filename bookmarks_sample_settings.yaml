@@ -1,0 +1,81 @@
+# Personal Bookmarks
+# Generated on 2025-11-10T18:17:58.261Z
+
+# Settings Configuration
+Settings:
+  categories: "General,Development,Support,Documentation,Intranet,Tools,Personal"
+  environmentTags: "dev, test, e2e"
+  organizeByCategory: true
+  enableWidgetPanel: true
+  enableClockWidget: true
+  enableTimerWidget: true
+  enableTodoWidget: true
+  enableMultiTimezone: true
+  timezones: "UTC|UTC,Europe/Lisbon|Lisbon,Europe/Berlin|Munich,Asia/Chongqing|China,America/Los_Angeles|PST"
+  timerPreset1: 60
+  timerPreset2: 30
+  timerPreset3: 30
+  timerShowPresets: false
+  timerSound: true
+  timerNotification: true
+
+# Bookmarks
+General:
+  - Book 1:
+    - https://example.com
+    - "Tags: book | Icon: fas fa-globe"
+  - Sprint Board:
+    - https://example.com
+    - "Tags: sprint, agile, board | Icon: fas fa-globe"
+  - Sprint Backlog:
+    - https://example.com
+    - "Tags: sprint, agile | Icon: fas fa-globe"
+
+Development:
+  - Repository 1:
+    - https://example.com
+    - "Tags: dev, gitlab | Icon: fas fa-globe"
+  - Swagger-UI:
+    - https://example.com
+    - "Tags: prod, region, api, swagger | Icon: fas fa-globe"
+  - Swagger-UI:
+    - http://localhost:8080/swagger-ui/index.html
+    - "Tags: dev, region, api, swagger | Icon: fas fa-globe"
+  - Swagger-UI:
+    - https://example.com
+    - "Tags: test, region, api, swagger | Icon: fas fa-globe"
+  - Swagger-UI:
+    - https://example.com
+    - "Tags: e2e, region, api, swagger | Icon: fas fa-globe"
+
+Support:
+  - Logs API:
+    - https://example.com
+    - "Tags: prod, region, logs | Icon: fas fa-globe"
+  - Logs Database:
+    - https://example.com
+    - "Tags: prod, region, logs | Icon: fas fa-globe"
+
+Documentation:
+  - Spring Getting Started:
+    - https://example.com
+    - "Tags: spring, docs | Icon: fas fa-book"
+
+Intranet:
+  - Help desk:
+    - https://example.com
+    - "Tags: helpdesk, internal | Icon: fas fa-globe"
+
+Tools:
+  - Dev Hints:
+    - https://devhints.io/
+    - "Tags: dev, helper, docs | Icon: fas fa-globe"
+  - JSON Generator:
+    - https://json-generator.com/
+    - "Tags: dev, docs, random | Icon: fas fa-globe"
+
+Personal:
+  - Stock Market:
+    - https://edition.cnn.com/markets
+    - "Tags: stock | Icon: fas fa-globe"
+
