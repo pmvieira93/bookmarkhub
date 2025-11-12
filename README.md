@@ -34,6 +34,18 @@ A modern, powerful bookmark manager designed for developers and productivity ent
 **Organized Category Sections**
 ![Compressed Sections](images/compress-sections.png)
 
+**Widget Sidebar - Expanded View**
+![Widget Sidebar Expanded](images/widget-sidebar-expand.png)
+
+**Widget Sidebar - Collapsed View**
+![Widget Sidebar Collapsed](images/widget-sidebar-collapse.png)
+
+**Widget Settings - Enabled**
+![Widget Settings Enabled](images/settings-widget-enable.png)
+
+**Widget Settings - Disabled**
+![Widget Settings Disabled](images/settings-widget-disable.png)
+
 </div>
 
 ## ✨ Features
@@ -77,10 +89,21 @@ A modern, powerful bookmark manager designed for developers and productivity ent
 - **Merge Import**: Import bookmarks without losing existing data
 - **Backup Friendly**: Easy export for backup purposes
 
+### 🧩 **Productivity Widgets**
+- **Widget Sidebar**: Collapsible side panel for productivity tools
+- **Focus Timer**: Pomodoro-style timer with customizable presets, sound alerts, and notifications
+- **ToDo List**: Built-in task manager to track your work alongside bookmarks
+- **Multi-Timezone Clock**: Display multiple time zones simultaneously (when enabled)
+- **Flexible Layout**: Toggle widgets on/off or collapse the sidebar for more bookmark space
+
 ### ⚙️ **Customizable Settings**
 - **Custom Categories**: Define your own bookmark categories
 - **Environment Tags**: Configure which tags appear as environment tags
 - **Organization Mode**: Toggle between grid view and category sections
+- **Widget Controls**: Enable/disable individual widgets and configure their behavior
+- **Timer Presets**: Set custom focus timer durations with sound and notification options
+- **Timezone Management**: Add custom timezones with display labels
+- **Settings Export/Import**: Save and share your complete settings configuration
 - **Persistent Settings**: All preferences saved automatically
 
 ## 🚀 Getting Started
@@ -93,7 +116,9 @@ A modern, powerful bookmark manager designed for developers and productivity ent
 5. Start organizing and filtering your bookmarks!
 
 ### Sample Data
-The project includes `bookmarks_sample.yaml` with example bookmarks to help you get started. You can import this file to see how the system works with real data.
+The project includes sample files to help you get started:
+- **`bookmarks_sample.yaml`**: Example bookmarks demonstrating the organization system
+- **`bookmarks_sample_settings.yaml`**: Complete settings configuration including widget preferences, timer presets, and timezone settings
 
 ## 🎮 Usage Guide
 
@@ -113,10 +138,17 @@ The project includes `bookmarks_sample.yaml` with example bookmarks to help you 
 - **Logic Toggle**: Switch between AND/OR logic for tag filtering
 - **Clear Filters**: Reset all active filters
 
+### Using Widgets
+- **Toggle Sidebar**: Click the collapse/expand button to adjust workspace
+- **Focus Timer**: Set custom durations or use presets for focused work sessions
+- **ToDo List**: Add, complete, and manage tasks directly in the sidebar
+- **Multi-Timezone Clock**: Monitor different time zones at a glance
+
 ### Managing Data
-- **Export**: Download your bookmarks as a YAML file
-- **Import**: Upload a YAML file to add bookmarks
-- **Settings**: Customize categories, tags, and organization preferences
+- **Export Bookmarks**: Download your bookmarks as a YAML file
+- **Export Settings**: Save your complete configuration (categories, tags, widget preferences)
+- **Import**: Upload YAML files to restore bookmarks and settings
+- **Settings**: Customize categories, tags, widgets, and organization preferences
 
 ## 🏗️ Technical Details
 
@@ -133,14 +165,31 @@ The project includes `bookmarks_sample.yaml` with example bookmarks to help you 
 - **Emoji Support**: Native emoji icons for personal touch
 
 ### Data Format
-Bookmarks are stored and exported in YAML format for easy editing and version control:
+Bookmarks and settings are stored and exported in YAML format for easy editing and version control:
 
+**Bookmarks:**
 ```yaml
 Development:
   - Swagger API:
     - https://api.example.com/swagger
     - "Tags: prod, api, documentation | Icon: fas fa-code"
   - GitHub Repository: https://github.com/user/repo
+```
+
+**Settings:**
+```yaml
+Settings:
+  categories: "General,Development,Support,Documentation"
+  environmentTags: "dev, test, e2e"
+  organizeByCategory: true
+  enableWidgetPanel: true
+  enableClockWidget: true
+  enableTimerWidget: true
+  enableTodoWidget: true
+  timerPreset1: 60
+  timerPreset2: 30
+  timerSound: true
+  timerNotification: true
 ```
 
 ### Browser Compatibility
@@ -152,11 +201,13 @@ Development:
 
 ```
 bookmarkhub/
-├── standard-ui.html     # Main application with theme switcher
-├── dark-ui.html         # Dark theme variant
-├── bookmarks_sample.yaml # Sample data for testing
-├── LICENSE             # MIT license
-└── README.md           # This documentation
+├── standard-ui.html              # Main application with theme switcher
+├── dark-ui.html                  # Dark theme variant
+├── bookmarks_sample.yaml         # Sample bookmarks for testing
+├── bookmarks_sample_settings.yaml # Sample settings configuration
+├── images/                       # Screenshots and documentation images
+├── LICENSE                       # MIT license
+└── README.md                     # This documentation
 ```
 
 ## 🤝 Contributing
@@ -185,16 +236,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Organize development tools, documentation, and resources
 - Separate environments (prod, dev, test) with environment tags
 - Quick access to APIs, repos, and monitoring tools
+- Use Focus Timer for Pomodoro work sessions
+- Track tasks and technical debt with integrated ToDo list
 
 **For Professionals:**
 - Manage work-related bookmarks with category organization
 - Tag-based filtering for project-specific resources
-- Export bookmarks for backup or sharing with team
+- Export bookmarks and settings for backup or sharing with team
+- Monitor multiple office timezones with multi-timezone clock
+- Stay productive with timer and task management widgets
 
 **For Personal Use:**
 - Organize personal interests with custom categories
 - Visual organization with icons and colors
 - Portable data format for easy backup
+- Manage personal tasks and time with built-in productivity widgets
 
 ---
 
